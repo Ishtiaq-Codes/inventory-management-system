@@ -83,6 +83,9 @@
                         </a>
                     </th>
                     <th scope="col" class="align-middle text-center">
+                        {{ __('Due Amount') }}
+                    </th>
+                    <th scope="col" class="align-middle text-center">
                         <a wire:click.prevent="sortBy('status')" href="#" role="button">
                             {{ __('Status') }}
                             @include('inclues._sort-icon', ['field' => 'status'])
@@ -114,6 +117,10 @@
 
                     <td class="align-middle text-center">
                         {{ Number::currency($purchase->paid_amount, 'PKR') }}
+                    </td>
+
+                    <td class="align-middle text-center text-danger">
+                        {{ Number::currency($purchase->total_amount - $purchase->paid_amount, 'PKR') }}
                     </td>
 
                     @if ($purchase->status === \App\Enums\PurchaseStatus::APPROVED)

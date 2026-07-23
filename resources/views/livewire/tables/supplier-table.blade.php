@@ -94,6 +94,9 @@
                     </a>
                 </th>
                 <th scope="col" class="align-middle text-center">
+                    {{ __('Due Amount') }}
+                </th>
+                <th scope="col" class="align-middle text-center">
                     <a wire:click.prevent="sortBy('created_at')" href="#" role="button">
                         {{ __('Created at') }}
                         @include('inclues._sort-icon', ['field' => 'created_at'])
@@ -132,6 +135,11 @@
                     <td class="align-middle text-center">
                         <span class="">
                             {{ $supplier->purchases_sum_paid_amount ?? 0 }}
+                        </span>
+                    </td>
+                    <td class="align-middle text-center">
+                        <span class="text-danger">
+                            {{ ($supplier->purchases_sum_total_amount ?? 0) - ($supplier->purchases_sum_paid_amount ?? 0) }}
                         </span>
                     </td>
                     <td class="align-middle text-center">

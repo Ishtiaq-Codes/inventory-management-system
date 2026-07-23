@@ -118,8 +118,8 @@
                                             </label>
 
                                             @if ($units->count() === 1)
-                                                <select name="category_id" id="category_id"
-                                                        class="form-select @error('category_id') is-invalid @enderror"
+                                                <select name="unit_id" id="unit_id"
+                                                        class="form-select @error('unit_id') is-invalid @enderror"
                                                         readonly
                                                 >
                                                     @foreach ($units as $unit)

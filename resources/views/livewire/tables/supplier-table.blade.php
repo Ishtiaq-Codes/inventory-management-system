@@ -7,12 +7,16 @@
         </div>
 
         <div class="card-actions">
+            <a href="{{ route('suppliers.import') }}" class="btn btn-outline-success mx-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-import" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path d="M5 13v-8a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2h-5.5m-9.5 -2h7m-3 -3l3 3l-3 3" /></svg>
+                Import Suppliers
+            </a>
             <x-action.create route="{{ route('suppliers.create') }}" />
         </div>
     </div>
 
     <div class="card-body border-bottom py-3">
-        <div class="d-flex">
+        <div class="d-flex align-items-center">
             <div class="text-secondary">
                 Show
                 <div class="mx-2 d-inline-block">
@@ -25,9 +29,18 @@
                 </div>
                 entries
             </div>
-            <div class="ms-auto text-secondary">
-                Search:
-                <div class="ms-2 d-inline-block">
+            
+            <div class="ms-auto d-flex align-items-center gap-3">
+                <div class="d-flex align-items-center">
+                    <span class="text-secondary me-2">From:</span>
+                    <input type="date" wire:model.live="startDate" class="form-control form-control-sm" title="Start Date">
+                </div>
+                <div class="d-flex align-items-center">
+                    <span class="text-secondary me-2">To:</span>
+                    <input type="date" wire:model.live="endDate" class="form-control form-control-sm" title="End Date">
+                </div>
+                <div class="d-flex align-items-center">
+                    <span class="text-secondary me-2">Search:</span>
                     <input type="text" wire:model.live="search" class="form-control form-control-sm" aria-label="Search invoice">
                 </div>
             </div>

@@ -68,8 +68,8 @@
                                             Type of supplier
                                         </label>
 
-                                        <select class="form-select @error('type') is-invalid @enderror" id="type" name="type">
-                                            <option selected="" disabled="">Select a type:</option>
+                                        <select class="form-select @error('type') is-invalid @enderror" id="type" name="type" required>
+                                            <option value="" selected="" disabled="">Select a type:</option>
 
                                             @foreach(\App\Enums\SupplierType::cases() as $supplierType)
                                                 <option value="{{ $supplierType->value }}" @selected(old('type') == $supplierType->value)>

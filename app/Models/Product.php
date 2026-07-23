@@ -4,12 +4,14 @@ namespace App\Models;
 
 use App\Enums\TaxType;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Product extends Model
 {
+    use SoftDeletes;
     use HasFactory;
 
     protected $guarded = ['id'];
@@ -73,8 +75,10 @@ class Product extends Model
 
     public function scopeSearch($query, $value): void
     {
-        $query->where('name', 'like', "%{$value}%")
-            ->orWhere('code', 'like', "%{$value}%");
+        $query->where(function($q) use ($value) {
+            $q->where('name', 'like', "%{$value}%")
+              ->orWhere('code', 'like', "%{$value}%");
+        });
     }
      /**
      * Get the user that owns the Category

@@ -17,7 +17,9 @@ class InvoiceController extends Controller
 
         return view('invoices.create', [
             'customer' => $customer,
-            'carts' => $carts
+            'carts' => $carts,
+            'purchase_date' => $request->get('purchase_date', now()->format('Y-m-d')),
+            'notes' => $request->get('notes')
         ]);
     }
 }

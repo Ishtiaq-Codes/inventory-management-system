@@ -12,7 +12,7 @@
     </div>
 
     <div class="card-body border-bottom py-3">
-        <div class="d-flex">
+        <div class="d-flex align-items-center">
             <div class="text-secondary">
                 Show
                 <div class="mx-2 d-inline-block">
@@ -25,9 +25,18 @@
                 </div>
                 entries
             </div>
-            <div class="ms-auto text-secondary">
-                Search:
-                <div class="ms-2 d-inline-block">
+            
+            <div class="ms-auto d-flex align-items-center gap-3">
+                <div class="d-flex align-items-center">
+                    <span class="text-secondary me-2">From:</span>
+                    <input type="date" wire:model.live="startDate" class="form-control form-control-sm" title="Start Date">
+                </div>
+                <div class="d-flex align-items-center">
+                    <span class="text-secondary me-2">To:</span>
+                    <input type="date" wire:model.live="endDate" class="form-control form-control-sm" title="End Date">
+                </div>
+                <div class="d-flex align-items-center">
+                    <span class="text-secondary me-2">Search:</span>
                     <input type="text" wire:model.live="search" class="form-control form-control-sm" aria-label="Search invoice">
                 </div>
             </div>

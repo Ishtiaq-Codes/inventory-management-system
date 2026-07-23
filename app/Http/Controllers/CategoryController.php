@@ -25,11 +25,15 @@ class CategoryController extends Controller
 
     public function store(StoreCategoryRequest $request)
     {
-        Category::create([
+        $category = Category::create([
             "user_id"=>auth()->id(),
             "name" => $request->name,
             "slug" => Str::slug($request->name)
         ]);
+
+        if ($request->wantsJson()) {
+            return response()->json(['category' => $category]);
+        }
 
         return redirect()
             ->route('categories.index')

@@ -60,7 +60,7 @@
                                 <input type="text"
                                        id="customer"
                                        class="form-control"
-                                       value="{{ $order->customer->name }}"
+                                       value="{{ $order->customer_name }}"
                                        disabled
                                 >
                             </div>

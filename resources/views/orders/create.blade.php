@@ -16,9 +16,9 @@
                             <x-action.close route="{{ route('orders.index') }}"/>
                         </div>
                     </div>
-                    <form action="{{ route('invoice.create') }}" method="POST">
-                    @csrf
-                        <div class="card-body">
+                    <div class="card-body">
+                        <form action="{{ route('invoice.create') }}" method="POST" id="invoiceForm">
+                        @csrf
                             <div class="row gx-3 mb-3">
                                 @include('partials.session')
                                 <div class="col-md-4">
@@ -46,17 +46,44 @@
                                         <span class="text-danger">*</span>
                                     </label>
 
-                                    <select class="form-select form-control-solid @error('customer_id') is-invalid @enderror" id="customer_id" name="customer_id">
-                                        <option selected="" disabled="">
-                                            Select a customer:
-                                        </option>
-
-                                        @foreach ($customers as $customer)
-                                            <option value="{{ $customer->id }}" @selected( old('customer_id') == $customer->id)>
-                                                {{ $customer->name }}
+                                    <div class="input-group">
+                                        <select class="form-select form-control-solid @error('customer_id') is-invalid @enderror" id="customer_id" name="customer_id" required>
+                                            <option value="" selected="" disabled="">
+                                                Select a customer:
                                             </option>
-                                        @endforeach
-                                    </select>
+
+                                            @foreach ($customers as $customer)
+                                                <option value="{{ $customer->id }}" @selected( old('customer_id') == $customer->id)>
+                                                    {{ $customer->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addCustomerModal" title="Add New Customer">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-plus m-0" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M12 5l0 14"></path><path d="M5 12l14 0"></path></svg>
+                                        </button>
+                                    </div>
+
+                                    {{-- Walk-in / Cash Customer quick button --}}
+                                    <button type="button" id="walkin-btn"
+                                            class="btn btn-sm mt-1 w-100"
+                                            style="background:#f97316; color:#fff; font-weight:700; border-radius:6px;"
+                                            onclick="selectWalkinCustomer()">
+                                        👤 Quick Cash Sale (Walk-in Customer)
+                                    </button>
+
+                                    {{-- Optional walk-in customer name input, hidden until button clicked --}}
+                                    <div id="walkin-name-row" style="display:none; margin-top:8px;">
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text" style="font-size:0.8rem;">Name</span>
+                                            <input type="text" id="walkin-name-input"
+                                                   class="form-control form-control-sm"
+                                                   placeholder="Customer name (optional, e.g. Asif, Ahmed...)"
+                                                   oninput="updateWalkinNote()">
+                                        </div>
+                                        <small class="text-muted" style="font-size:0.72rem;">Leave blank to keep as "Walk-in Customer"</small>
+                                    </div>
+                                    {{-- Hidden notes field carrying the walk-in name --}}
+                                    <input type="hidden" id="walkin-notes" name="notes" value="">
 
                                     @error('customer_id')
                                     <div class="invalid-feedback">
@@ -84,6 +111,7 @@
                                     @enderror
                                 </div>
                             </div>
+                        </form>
 
                             <div class="table-responsive">
                                 <table class="table table-striped table-bordered align-middle">
@@ -174,11 +202,10 @@
 
                         </div>
                         <div class="card-footer text-end">
-                            <button type="submit" class="btn btn-success add-list mx-1 {{ Cart::count() > 0 ? '' : 'disabled' }}">
+                            <button type="submit" form="invoiceForm" class="btn btn-success add-list mx-1 {{ Cart::count() > 0 ? '' : 'disabled' }}">
                                 {{ __('Create Invoice') }}
                             </button>
                         </div>
-                    </form>
                 </div>
             </div>
 
@@ -258,8 +285,145 @@
         </div>
     </div>
 </div>
+
+<!-- Modal for Quick Add Customer -->
+<div class="modal modal-blur fade" id="addCustomerModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form id="addCustomerForm">
+                <div class="modal-header">
+                    <h5 class="modal-title">Quick Add Customer</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="customerFormError" class="alert alert-danger d-none"></div>
+                    <div class="row">
+                        <div class="col-lg-12 mb-3">
+                            <label class="form-label required">Name</label>
+                            <input type="text" class="form-control" name="name" required placeholder="Customer Name">
+                        </div>
+                        <div class="col-lg-12 mb-3">
+                            <label class="form-label required">Phone</label>
+                            <input type="text" class="form-control" name="phone" required placeholder="Customer Phone">
+                        </div>
+                        <div class="col-lg-12 mb-3">
+                            <label class="form-label">Email (Optional)</label>
+                            <input type="email" class="form-control" name="email" placeholder="Customer Email">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn me-auto" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-success" id="btnSaveCustomer">Save Customer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection
 
 @pushonce('page-scripts')
     <script src="{{ asset('assets/js/img-preview.js') }}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const form = document.getElementById('addCustomerForm');
+            const errorAlert = document.getElementById('customerFormError');
+            const btnSave = document.getElementById('btnSaveCustomer');
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                errorAlert.classList.add('d-none');
+                btnSave.disabled = true;
+                btnSave.textContent = 'Saving...';
+
+                const formData = new FormData(form);
+
+                fetch("{{ route('customers.store') }}", {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => { throw err; });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if(data.success && data.customer) {
+                        // Add to select
+                        const select = document.getElementById('customer_id');
+                        const option = document.createElement('option');
+                        option.value = data.customer.id;
+                        option.text = data.customer.name;
+                        option.selected = true;
+                        select.appendChild(option);
+
+                        // Close modal and reset
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('addCustomerModal'));
+                        modal.hide();
+                        form.reset();
+                    }
+                })
+                .catch(error => {
+                    errorAlert.classList.remove('d-none');
+                    if (error.errors) {
+                        errorAlert.innerHTML = Object.values(error.errors).map(err => `<div>${err[0]}</div>`).join('');
+                    } else {
+                        errorAlert.innerHTML = 'An error occurred while saving.';
+                    }
+                })
+                .finally(() => {
+                    btnSave.disabled = false;
+                    btnSave.textContent = 'Save Customer';
+                });
+            });
+        });
+    </script>
+
+    <script>
+        function selectWalkinCustomer() {
+            const btn = document.getElementById('walkin-btn');
+            const select = document.getElementById('customer_id');
+            const nameRow = document.getElementById('walkin-name-row');
+
+            btn.disabled = true;
+            btn.textContent = 'Setting up...';
+
+            fetch('{{ route("customers.walkin") }}', {
+                headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(r => r.json())
+            .then(data => {
+                // Add option if not already in the dropdown
+                let opt = select.querySelector(`option[value="${data.id}"]`);
+                if (!opt) {
+                    opt = new Option(data.name, data.id);
+                    select.appendChild(opt);
+                }
+                select.value = data.id;
+                btn.textContent = '✅ Walk-in Customer Selected';
+                btn.style.background = '#16a34a';
+                // Show the optional name input
+                nameRow.style.display = 'block';
+                document.getElementById('walkin-name-input').focus();
+            })
+            .catch(() => {
+                btn.disabled = false;
+                btn.textContent = '👤 Quick Cash Sale (Walk-in Customer)';
+                btn.style.background = '#f97316';
+                alert('Could not set walk-in customer. Please select manually.');
+            });
+        }
+
+        function updateWalkinNote() {
+            const name = document.getElementById('walkin-name-input').value.trim();
+            const notesField = document.getElementById('walkin-notes');
+            notesField.value = name ? 'Walk-in: ' + name : '';
+        }
+    </script>
 @endpushonce

@@ -18,6 +18,8 @@ use App\Http\Controllers\Quotation\QuotationController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\DailyReportController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -31,16 +33,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('php/', function () {
-    return phpinfo();
-});
 
 Route::get('/', function () {
     if (Auth::check()) {
         return redirect('/dashboard');
     }
     return redirect('/login');
-});
+})->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
@@ -57,9 +56,29 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    // Expenses (Kharch)
+    Route::get('/expenses', [ExpenseController::class, 'index'])->name('expenses.index');
+    Route::post('/expenses', [ExpenseController::class, 'store'])->name('expenses.store');
+    Route::delete('/expenses/{id}', [ExpenseController::class, 'destroy'])->name('expenses.destroy');
+
+    // Daily Closing Report
+    Route::get('/report/daily', [DailyReportController::class, 'index'])->name('report.daily');
+
     Route::resource('/quotations', QuotationController::class);
+    // Walk-in / Cash Customer (find-or-create)
+    Route::get('/customers/walkin', [CustomerController::class, 'walkin'])->name('customers.walkin');
+    
+    // Customer Import Routes
+    Route::get('/customers/import', [\App\Http\Controllers\Customer\CustomerImportController::class, 'create'])->name('customers.import.create');
+    Route::post('/customers/import', [\App\Http\Controllers\Customer\CustomerImportController::class, 'store'])->name('customers.import.store');
+    
     Route::resource('/customers', CustomerController::class);
-    Route::resource('/suppliers', SupplierController::class);
+
+    Route::post('/customers/{uuid}/old-balance', [CustomerController::class, 'storeOldBalance'])->name('customers.storeOldBalance');
+    Route::get('/suppliers/import', [\App\Http\Controllers\Supplier\SupplierImportController::class, 'create'])->name('suppliers.import');
+    Route::post('/suppliers/import', [\App\Http\Controllers\Supplier\SupplierImportController::class, 'store'])->name('suppliers.import.store');
+    Route::resource('/suppliers', \App\Http\Controllers\SupplierController::class);
+    Route::post('/suppliers/{uuid}/old-balance', [SupplierController::class, 'storeOldBalance'])->name('suppliers.storeOldBalance');
     Route::resource('/categories', CategoryController::class);
     Route::resource('/units', UnitController::class);
 
@@ -121,12 +140,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Route Quotations
     // Route::get('/quotations/{quotation}/edit', [QuotationController::class, 'edit'])->name('quotations.edit');
-    Route::post('/quotations/complete/{quotation}', [QuotationController::class, 'update'])->name('quotations.update');
+    Route::post('/quotations/complete/{quotation}', [QuotationController::class, 'update'])->name('quotations.complete');
     Route::delete('/quotations/delete/{quotation}', [QuotationController::class, 'destroy'])->name('quotations.delete');
 });
 
 require __DIR__.'/auth.php';
-
-Route::get('test/', function (){
-    return view('test');
-});

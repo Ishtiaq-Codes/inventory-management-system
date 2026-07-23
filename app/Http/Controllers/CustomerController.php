@@ -32,7 +32,7 @@ class CustomerController extends Controller
         if ($request->hasFile('photo')) {
             $image = $request->file('photo')->store('customers', 'public');
         }
-        Customer::create([
+        $customer = Customer::create([
             'user_id' => auth()->id(),
             'uuid' => Str::uuid(),
             'photo' => $image,
@@ -47,7 +47,13 @@ class CustomerController extends Controller
             'address' => $request->address,
         ]);
 
-
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'customer' => $customer,
+                'message' => 'New customer has been created!'
+            ]);
+        }
 
         return redirect()
             ->route('customers.index')
@@ -57,7 +63,10 @@ class CustomerController extends Controller
     public function show($uuid)
     {
         $customer = Customer::where('uuid', $uuid)->firstOrFail();
-        $customer->loadMissing(['quotations', 'orders'])->get();
+        // Load orders ordered by newest first
+        $customer->loadMissing(['quotations', 'orders' => function($query) {
+            $query->orderBy('order_date', 'desc')->orderBy('created_at', 'desc');
+        }]);
 
         return view('customers.show', [
             'customer' => $customer
@@ -108,14 +117,88 @@ class CustomerController extends Controller
     public function destroy($uuid)
     {
         $customer = Customer::where('uuid', $uuid)->firstOrFail();
-        if ($customer->photo) {
-            unlink(public_path('storage/') . $customer->photo);
-        }
+        
+        try {
+            if ($customer->photo && file_exists(public_path('storage/') . $customer->photo)) {
+                unlink(public_path('storage/') . $customer->photo);
+            }
 
-        $customer->delete();
+            $customer->delete();
+
+            return redirect()
+                ->back()
+                ->with('success', 'Customer has been deleted!');
+        } catch (\Illuminate\Database\QueryException $e) {
+            // Check if it's a foreign key constraint violation
+            if ($e->getCode() == "23000") {
+                return redirect()
+                    ->back()
+                    ->with('error', 'Cannot delete this customer because they have existing orders in the system. Please delete their orders first.');
+            }
+            return redirect()
+                ->back()
+                ->with('error', 'An error occurred while trying to delete the customer.');
+        }
+    }
+
+    public function storeOldBalance(\Illuminate\Http\Request $request, $uuid)
+    {
+        $request->validate([
+            'total_amount' => 'required|numeric|min:0.01',
+            'paid_amount' => 'required|numeric|min:0',
+            'date' => 'required|date',
+            'notes' => 'nullable|string'
+        ]);
+
+        $customer = Customer::where('uuid', $uuid)->firstOrFail();
+
+        $total = $request->total_amount;
+        $paid = $request->paid_amount;
+        $due = max(0, $total - $paid);
+
+        \App\Models\Order::create([
+            'customer_id' => $customer->id,
+            'payment_type' => 'Cash',
+            'pay' => $paid,
+            'order_date' => $request->date,
+            'order_status' => \App\Enums\OrderStatus::COMPLETE,
+            'total_products' => 0,
+            'sub_total' => $total,
+            'vat' => 0,
+            'total' => $total,
+            'invoice_no' => 'OLD-BAL-' . strtoupper(Str::random(6)),
+            'due' => $due,
+            'user_id' => auth()->id(),
+            'uuid' => Str::uuid(),
+            'notes' => $request->notes
+        ]);
 
         return redirect()
-            ->back()
-            ->with('success', 'Customer has been deleted!');
+            ->route('customers.show', $customer->uuid)
+            ->with('success', 'Old notebook record has been added successfully!');
+    }
+
+    /**
+     * Find or create the special "Walk-in Customer" for quick cash sales.
+     * Returns JSON with the customer id & name.
+     */
+    public function walkin()
+    {
+        $customer = Customer::firstOrCreate(
+            [
+                'user_id' => auth()->id(),
+                'name'    => 'Walk-in Customer',
+            ],
+            [
+                'uuid'    => Str::uuid(),
+                'phone'   => '0000000000',
+                'address' => 'Walk-in / Cash Sale',
+            ]
+        );
+
+        return response()->json([
+            'id'   => $customer->id,
+            'name' => $customer->name,
+        ]);
     }
 }

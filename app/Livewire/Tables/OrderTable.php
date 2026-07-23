@@ -18,6 +18,10 @@ class OrderTable extends Component
 
     public $sortAsc = false;
 
+    public $startDate = '';
+
+    public $endDate = '';
+
     public function sortBy($field): void
     {
         if($this->sortField === $field)
@@ -36,6 +40,8 @@ class OrderTable extends Component
         return view('livewire.tables.order-table', [
             'orders' => Order::where("user_id",auth()->id())
                 ->with(['customer', 'details'])
+                ->when($this->startDate, fn($q) => $q->whereDate('order_date', '>=', $this->startDate))
+                ->when($this->endDate, fn($q) => $q->whereDate('order_date', '<=', $this->endDate))
                 ->search($this->search)
                 ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
                 ->paginate($this->perPage)

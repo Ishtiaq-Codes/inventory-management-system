@@ -88,8 +88,9 @@
                                             @else
                                                 <select name="category_id" id="category_id"
                                                         class="form-select @error('category_id') is-invalid @enderror"
+                                                        required
                                                 >
-                                                    <option selected="" disabled="">
+                                                    <option value="" selected="" disabled="">
                                                         Select a category:
                                                     </option>
 
@@ -130,8 +131,9 @@
                                             @else
                                                 <select name="unit_id" id="unit_id"
                                                         class="form-select @error('unit_id') is-invalid @enderror"
+                                                        required
                                                 >
-                                                    <option selected="" disabled="">
+                                                    <option value="" selected="" disabled="">
                                                         Select a unit:
                                                     </option>
 
@@ -208,6 +210,7 @@
                                             <select name="tax_type" id="tax_type"
                                                     class="form-select @error('tax_type') is-invalid @enderror"
                                             >
+                                                <option value="" selected="" disabled="">Select a tax type:</option>
                                                 @foreach(\App\Enums\TaxType::cases() as $taxType)
                                                 <option value="{{ $taxType->value }}" @selected(old('tax_type') == $taxType->value)>
                                                     {{ $taxType->label() }}

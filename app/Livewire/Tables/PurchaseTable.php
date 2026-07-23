@@ -18,6 +18,10 @@ class PurchaseTable extends Component
 
     public $sortAsc = false;
 
+    public $startDate = '';
+
+    public $endDate = '';
+
     public function sortBy($field): void
     {
         if($this->sortField === $field)
@@ -36,6 +40,8 @@ class PurchaseTable extends Component
         return view('livewire.tables.purchase-table', [
             'purchases' => Purchase::where("user_id",auth()->id())
                 ->with('supplier')
+                ->when($this->startDate, fn($q) => $q->whereDate('date', '>=', $this->startDate))
+                ->when($this->endDate, fn($q) => $q->whereDate('date', '<=', $this->endDate))
                 ->search($this->search)
                 ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
                 ->paginate($this->perPage)

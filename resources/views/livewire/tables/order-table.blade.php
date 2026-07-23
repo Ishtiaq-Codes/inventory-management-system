@@ -12,7 +12,7 @@
     </div>
 
     <div class="card-body border-bottom py-3">
-        <div class="d-flex">
+        <div class="d-flex align-items-center">
             <div class="text-secondary">
                 Show
                 <div class="mx-2 d-inline-block">
@@ -25,11 +25,19 @@
                 </div>
                 entries
             </div>
-            <div class="ms-auto text-secondary">
-                Search:
-                <div class="ms-2 d-inline-block">
-                    <input type="text" wire:model.live="search" class="form-control form-control-sm"
-                        aria-label="Search invoice">
+            
+            <div class="ms-auto d-flex align-items-center gap-3">
+                <div class="d-flex align-items-center">
+                    <span class="text-secondary me-2">From:</span>
+                    <input type="date" wire:model.live="startDate" class="form-control form-control-sm" title="Start Date">
+                </div>
+                <div class="d-flex align-items-center">
+                    <span class="text-secondary me-2">To:</span>
+                    <input type="date" wire:model.live="endDate" class="form-control form-control-sm" title="End Date">
+                </div>
+                <div class="d-flex align-items-center">
+                    <span class="text-secondary me-2">Search:</span>
+                    <input type="text" wire:model.live="search" class="form-control form-control-sm" aria-label="Search invoice">
                 </div>
             </div>
         </div>
@@ -75,6 +83,18 @@
                         </a>
                     </th>
                     <th scope="col" class="align-middle text-center">
+                        <a wire:click.prevent="sortBy('pay')" href="#" role="button">
+                            {{ __('Paid') }}
+                            @include('inclues._sort-icon', ['field' => 'pay'])
+                        </a>
+                    </th>
+                    <th scope="col" class="align-middle text-center">
+                        <a wire:click.prevent="sortBy('due')" href="#" role="button">
+                            {{ __('Due') }}
+                            @include('inclues._sort-icon', ['field' => 'due'])
+                        </a>
+                    </th>
+                    <th scope="col" class="align-middle text-center">
                         <a wire:click.prevent="sortBy('order_status')" href="#" role="button">
                             {{ __('Status') }}
                             @include('inclues._sort-icon', ['field' => 'order_status'])
@@ -95,7 +115,7 @@
                             {{ $order->invoice_no }}
                         </td>
                         <td class="align-middle text-center">
-                            {{ $order->customer->name }}
+                            {{ $order->customer_name }}
                         </td>
                         <td class="align-middle text-center">
                             {{ $order->order_date->format('d-m-Y') }}
@@ -105,6 +125,12 @@
                         </td>
                         <td class="align-middle text-center">
                             {{ Number::currency($order->total, 'PKR') }}
+                        </td>
+                        <td class="align-middle text-center text-success">
+                            {{ Number::currency($order->pay, 'PKR') }}
+                        </td>
+                        <td class="align-middle text-center {{ $order->due > 0 ? 'text-danger fw-bold' : '' }}">
+                            {{ Number::currency($order->due, 'PKR') }}
                         </td>
                         <td class="align-middle text-center">
                             <x-status dot
@@ -125,7 +151,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td class="align-middle text-center" colspan="8">
+                        <td class="align-middle text-center" colspan="10">
                             No results found
                         </td>
                     </tr>

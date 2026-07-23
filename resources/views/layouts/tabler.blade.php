@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name') }}</title>
+    <title>{{ config('app.name') }} — Saleem Tyre House</title>
 
     <!-- CSS files -->
     <link href="{{ asset('dist/css/tabler.min.css') }}" rel="stylesheet" />
@@ -15,529 +15,643 @@
     <link href="{{ asset('dist/css/tabler-payments.min.css') }}" rel="stylesheet" />
     <link href="{{ asset('dist/css/tabler-vendors.min.css') }}" rel="stylesheet" />
     <link href="{{ asset('dist/css/demo.min.css') }}" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        @import url('https://rsms.me/inter/inter.css');
-
         :root {
-            --tblr-font-sans-serif: 'Inter Var', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif;
+            --tblr-font-sans-serif: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --sth-orange: #f97316;
+            --sth-orange-dark: #ea6a0a;
+            --sth-dark: #0f1117;
+            --sth-dark-2: #1a1d27;
+            --sth-dark-3: #232736;
+            --sth-border: rgba(255,255,255,0.08);
+            --sth-text-muted: #8b92a5;
         }
+
+        * { box-sizing: border-box; }
 
         body {
-            font-feature-settings: "cv03", "cv04", "cv11";
+            font-family: var(--tblr-font-sans-serif);
+            background: #f0f2f5;
+            font-feature-settings: "cv03","cv04","cv11";
         }
 
-        .form-control:focus {
-            box-shadow: none;
+        /* ===== DARK SIDEBAR ===== */
+        .sth-sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 240px;
+            height: 100vh;
+            background: var(--sth-dark);
+            border-right: 1px solid var(--sth-border);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
         }
+
+        .sth-sidebar::-webkit-scrollbar { width: 4px; }
+        .sth-sidebar::-webkit-scrollbar-track { background: transparent; }
+        .sth-sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+        .sth-logo {
+            padding: 20px 20px 16px;
+            border-bottom: 1px solid var(--sth-border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .sth-logo img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .sth-logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--sth-orange), var(--sth-orange-dark));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .sth-logo-text {
+            line-height: 1.2;
+        }
+
+        .sth-logo-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #fff;
+            display: block;
+        }
+
+        .sth-logo-subtitle {
+            font-size: 0.7rem;
+            color: var(--sth-text-muted);
+            display: block;
+        }
+
+        .sth-nav {
+            padding: 12px 0;
+            flex: 1;
+        }
+
+        .sth-nav-section {
+            padding: 16px 16px 6px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--sth-text-muted);
+        }
+
+        .sth-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 16px;
+            color: #9ca3b0;
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-radius: 0;
+            transition: all 0.15s ease;
+            margin: 1px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .sth-nav-item:hover {
+            background: rgba(255,255,255,0.06);
+            color: #fff;
+        }
+
+        .sth-nav-item.active {
+            background: linear-gradient(135deg, rgba(249,115,22,0.2), rgba(249,115,22,0.1));
+            color: var(--sth-orange);
+            border-left: 3px solid var(--sth-orange);
+            margin-left: 5px;
+            padding-left: 13px;
+        }
+
+        .sth-nav-item svg {
+            flex-shrink: 0;
+            opacity: 0.7;
+        }
+
+        .sth-nav-item.active svg,
+        .sth-nav-item:hover svg {
+            opacity: 1;
+        }
+
+        .sth-nav-dropdown {
+            overflow: hidden;
+        }
+
+        .sth-nav-dropdown-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 16px;
+            color: #9ca3b0;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.15s ease;
+            margin: 1px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            justify-content: space-between;
+        }
+
+        .sth-nav-dropdown-toggle:hover,
+        .sth-nav-dropdown-toggle.active {
+            background: rgba(255,255,255,0.06);
+            color: #fff;
+        }
+
+        .sth-nav-dropdown-toggle.active {
+            background: linear-gradient(135deg, rgba(249,115,22,0.2), rgba(249,115,22,0.1));
+            color: var(--sth-orange);
+        }
+
+        .sth-nav-dropdown-inner {
+            display: none;
+        }
+
+        .sth-nav-dropdown.open .sth-nav-dropdown-inner {
+            display: block;
+        }
+
+        .sth-nav-dropdown-inner .sth-nav-item {
+            padding-left: 42px;
+            font-size: 0.82rem;
+        }
+
+        .sth-dropdown-arrow {
+            transition: transform 0.2s ease;
+            margin-left: auto;
+        }
+
+        .sth-nav-dropdown.open .sth-dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        .sth-nav-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sth-sidebar-footer {
+            padding: 16px;
+            border-top: 1px solid var(--sth-border);
+        }
+
+        .sth-user-card {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.05);
+            cursor: pointer;
+            transition: background 0.15s;
+            text-decoration: none;
+        }
+
+        .sth-user-card:hover {
+            background: rgba(255,255,255,0.08);
+        }
+
+        .sth-user-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .sth-user-name {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #fff;
+            line-height: 1.2;
+        }
+
+        .sth-user-role {
+            font-size: 0.7rem;
+            color: var(--sth-text-muted);
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .sth-main {
+            margin-left: 240px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ===== TOP BAR ===== */
+        .sth-topbar {
+            background: #fff;
+            border-bottom: 1px solid #e5e7ef;
+            padding: 0 24px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 90;
+        }
+
+        .sth-topbar-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1a1d27;
+        }
+
+        .sth-topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sth-topbar-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f4f6f9;
+            color: #6b7280;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-decoration: none;
+        }
+
+        .sth-topbar-btn:hover {
+            background: #e8ebf0;
+            color: #374151;
+        }
+
+        /* ===== PAGE CONTENT ===== */
+        .sth-content {
+            flex: 1;
+            padding: 24px;
+        }
+
+        /* ===== ALERTS / FLASH ===== */
+        .sth-alert {
+            padding: 14px 18px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .sth-alert-success {
+            background: #dcfce7;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+
+        .sth-alert-error {
+            background: #fee2e2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        /* ===== BADGE for nav ===== */
+        .sth-badge {
+            background: var(--sth-orange);
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 99px;
+            margin-left: auto;
+        }
+
+        /* ===== FOOTER ===== */
+        .sth-footer {
+            padding: 16px 24px;
+            color: var(--sth-text-muted);
+            font-size: 0.75rem;
+            border-top: 1px solid #e5e7ef;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .sth-sidebar { transform: translateX(-240px); }
+            .sth-sidebar.open { transform: translateX(0); }
+            .sth-main { margin-left: 0; }
+        }
+
+        /* ===== OVERRIDE TABLER CARDS ===== */
+        .card {
+            border-radius: 12px !important;
+            border: 1px solid #e5e7ef !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06) !important;
+        }
+
+        .form-control:focus, .form-select:focus {
+            box-shadow: 0 0 0 3px rgba(249,115,22,0.15) !important;
+            border-color: var(--sth-orange) !important;
+        }
+
+        .btn-primary {
+            background: var(--sth-orange) !important;
+            border-color: var(--sth-orange-dark) !important;
+        }
+
+        .btn-primary:hover {
+            background: var(--sth-orange-dark) !important;
+        }
+
+        /* Page header styling */
+        .page-header {
+            background: transparent;
+            padding: 0 0 20px 0;
+            border-bottom: none;
+        }
+
+        .page-title { font-size: 1.4rem; font-weight: 700; color: #1a1d27; }
+        .page-pretitle { font-size: 0.75rem; color: var(--sth-text-muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+
+        /* Logout form */
+        .sth-logout-form { margin: 0; }
     </style>
 
-    {{-- - Page Styles - --}}
+    {{-- Page Styles --}}
     @stack('page-styles')
     @livewireStyles
+    <link href="{{ asset('vendor/rappasoft/livewire-tables/css/laravel-livewire-tables.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('vendor/rappasoft/livewire-tables/css/laravel-livewire-tables-thirdparty.min.css') }}" rel="stylesheet">
 </head>
 
 <body>
     <script src="{{ asset('dist/js/demo-theme.min.js') }}"></script>
 
-    <div class="page">
-        <header class="navbar navbar-expand-md d-print-none">
-            <div class="container-xl">
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu"
-                    aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
-                    <a href="{{ url('/') }}">
-                         {{-- <img src="{{ asset('static/logo.svg') }}" width="110" height="32" alt="Tabler"
-                            class="navbar-brand-image"> --}}
-                            Saleem Tyre House
+    <!-- Sidebar -->
+    <aside class="sth-sidebar" id="sth-sidebar">
+
+        <!-- Logo -->
+        <a href="{{ route('dashboard') }}" class="sth-logo">
+            <div class="sth-logo-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/>
+                    <path d="M12 2v3m0 14v3M2 12h3m14 0h3M4.93 4.93l2.12 2.12m9.9 9.9 2.12 2.12M4.93 19.07l2.12-2.12m9.9-9.9 2.12-2.12"/>
+                </svg>
+            </div>
+            <div class="sth-logo-text">
+                <span class="sth-logo-title">Saleem Tyre House</span>
+                <span class="sth-logo-subtitle">Inventory & Finance</span>
+            </div>
+        </a>
+
+        <!-- Navigation -->
+        <nav class="sth-nav">
+
+            <div class="sth-nav-section">Main</div>
+
+            <a href="{{ route('dashboard') }}"
+               class="sth-nav-item {{ request()->is('dashboard*') ? 'active' : '' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                Dashboard
+            </a>
+
+            <a href="{{ route('orders.create') }}"
+               class="sth-nav-item {{ request()->is('orders/create') ? 'active' : '' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                New Sale / Order
+                <span class="sth-badge" style="margin-left:auto;">+</span>
+            </a>
+
+            <div class="sth-nav-section">Inventory</div>
+
+            <a href="{{ route('products.index') }}"
+               class="sth-nav-item {{ request()->is('products*') ? 'active' : '' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><path d="M8 21h8m-4-4v4"/></svg>
+                Products
+            </a>
+
+            <div class="sth-nav-dropdown {{ request()->is('orders*') ? 'open' : '' }}">
+                <div class="sth-nav-dropdown-toggle {{ request()->is('orders*') ? 'active' : '' }}" onclick="toggleDropdown(this)">
+                    <div class="sth-nav-left">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                        Orders
+                    </div>
+                    <svg class="sth-dropdown-arrow" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                </div>
+                <div class="sth-nav-dropdown-inner">
+                    <a href="{{ route('orders.index') }}" class="sth-nav-item {{ request()->is('orders') ? 'active' : '' }}">All Orders</a>
+                    <a href="{{ route('orders.complete') }}" class="sth-nav-item {{ request()->is('orders/complete') ? 'active' : '' }}">Completed</a>
+                    <a href="{{ route('due.index') }}" class="sth-nav-item {{ request()->is('due*') ? 'active' : '' }}">
+                        Due / Credit
+                        @php $dueCnt = \App\Models\Order::where('due','>',0)->count(); @endphp
+                        @if($dueCnt > 0)<span class="sth-badge">{{ $dueCnt }}</span>@endif
                     </a>
-                </h1>
-                <div class="navbar-nav flex-row order-md-last">
-                    <div class="d-none d-md-flex">
-
-                        {{-- -
-                            <a href="?theme=dark" class="nav-link px-0 hide-theme-dark" title="Enable dark mode" data-bs-toggle="tooltip"
-                               data-bs-placement="bottom">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" /></svg>
-                            </a>
-                            <a href="?theme=light" class="nav-link px-0 hide-theme-light" title="Enable light mode" data-bs-toggle="tooltip"
-                               data-bs-placement="bottom">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" /><path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7" /></svg>
-                            </a>
-                            - --}}
-
-                        <div class="nav-item dropdown d-none d-md-flex me-3">
-                            <a href="#" class="nav-link px-0" data-bs-toggle="dropdown" tabindex="-1"
-                                aria-label="Show notifications">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
-                                    viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                    stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                    <path
-                                        d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" />
-                                    <path d="M9 17v1a3 3 0 0 0 6 0v-1" />
-                                </svg>
-
-                                @if (auth()->user()->unreadNotifications->count() !== 0)
-                                    <span class="badge bg-red"></span>
-                                @endif
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-arrow dropdown-menu-end dropdown-menu-card">
-
-                                {{--                                    <div class="card"> --}}
-                                {{--                                        <div class="card-header"> --}}
-                                {{--                                            <h3 class="card-title">Last updates</h3> --}}
-                                {{--                                        </div> --}}
-                                {{--                                        <div class="list-group list-group-flush list-group-hoverable"> --}}
-
-                                {{--                                            @foreach (auth()->user()->unreadNotifications as $notification) --}}
-                                {{--                                                <a href="#" class="text-success"> --}}
-                                {{--                                                    <li class="p-1 text-success"> {{$notification->data['data']}}</li> --}}
-                                {{--                                                </a> --}}
-                                {{--                                                <div class="list-group-item"> --}}
-                                {{--                                                    <div class="row align-items-center"> --}}
-                                {{--                                                        <div class="col-auto"><span class="status-dot status-dot-animated bg-red d-block"></span></div> --}}
-                                {{--                                                        <div class="col text-truncate"> --}}
-                                {{--                                                            <a href="#" class="text-body d-block">Example 1</a> --}}
-                                {{--                                                            <div class="d-block text-muted text-truncate mt-n1"> --}}
-                                {{--                                                                Change deprecated html tags to text decoration classes (#29604) --}}
-                                {{--                                                            </div> --}}
-                                {{--                                                        </div> --}}
-                                {{--                                                        <div class="col-auto"> --}}
-                                {{--                                                            <a href="#" class="list-group-item-actions"> --}}
-                                {{--                                                                <!-- Download SVG icon from http://tabler-icons.io/i/star --> --}}
-                                {{--                                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z" /></svg> --}}
-                                {{--                                                            </a> --}}
-                                {{--                                                        </div> --}}
-                                {{--                                                    </div> --}}
-                                {{--                                                </div> --}}
-                                {{--                                            @endforeach --}}
-                                {{--                                        </div> --}}
-                                {{--                                    </div> --}}
-                                <span class="dropdown-header">Dropdown header</span>
-                                <a class="dropdown-item" href="#">
-                                    Action
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    Another action
-                                </a>
-                            </div>
-                        </div>
-
-                        {{-- -
-                            <div class="dropdown">
-                                <a href="#" class="btn dropdown-toggle" data-bs-toggle="dropdown">Open dropdown</a>
-                                <div class="dropdown-menu">
-                                    <span class="dropdown-header">Dropdown header</span>
-                                    <a class="dropdown-item" href="#">
-                                        Action
-                                    </a>
-                                    <a class="dropdown-item" href="#">
-                                        Another action
-                                    </a>
-                                </div>
-                            </div>
-                            - --}}
-
-                    </div>
-
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown"
-                            aria-label="Open user menu">
-                            <span class="avatar avatar-sm shadow-none"
-                                style="background-image: url({{ Auth::user()->photo ? asset('storage/profile/' . Auth::user()->photo) : asset('assets/img/illustrations/profiles/admin.jpg') }})">
-                            </span>
-
-                            <div class="d-none d-xl-block ps-2">
-                                <div>{{ Auth::user()->name }}</div>
-                                {{--                                    <div class="mt-1 small text-muted">UI Designer</div> --}}
-                            </div>
-                        </a>
-                        <div class="dropdown-menu">
-                            <a href="{{ route('profile.edit') }}" class="dropdown-item">
-                                <svg xmlns="http://www.w3.org/2000/svg"
-                                    class="icon dropdown-item-icon icon-tabler icon-tabler-settings" width="24"
-                                    height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                                    fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                    <path
-                                        d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z">
-                                    </path>
-                                    <path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path>
-                                </svg>
-                                Account
-                            </a>
-                            <form action="{{ route('logout') }}" method="post">
-                                @csrf
-                                <button type="submit" class="dropdown-item">
-                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                        class="icon dropdown-item-icon icon-tabler icon-tabler-logout" width="24"
-                                        height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                                        fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path
-                                            d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" />
-                                        <path d="M9 12h12l-3 -3" />
-                                        <path d="M18 15l3 -3" />
-                                    </svg>
-                                    Logout
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-
-                    {{-- -
-                        <div class="dropdown">
-                            <a href="#" class="btn dropdown-toggle" data-bs-toggle="dropdown">Open dropdown</a>
-                            <div class="dropdown-menu">
-
-                                <a class="dropdown-item" href="#">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon dropdown-item-icon icon-tabler icon-tabler-settings" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                        <path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z"></path>
-                                        <path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path>
-                                    </svg>
-                                    Action
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon dropdown-item-icon icon-tabler icon-tabler-pencil" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                        <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4"></path>
-                                        <path d="M13.5 6.5l4 4"></path>
-                                    </svg>
-                                    Another action
-                                </a>
-                            </div>
-                        </div>
-                        - --}}
-
-
                 </div>
             </div>
-        </header>
 
-        <header class="navbar-expand-md">
-            <div class="collapse navbar-collapse" id="navbar-menu">
-                <div class="navbar">
-                    <div class="container-xl">
-                        <ul class="navbar-nav">
-                            <li class="nav-item {{ request()->is('dashboard*') ? 'active' : null }}">
-                                <a class="nav-link" href="{{ route('dashboard') }}">
-                                    <span
-                                        class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/home -->
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24"
-                                            height="24" viewBox="0 0 24 24" stroke-width="2"
-                                            stroke="currentColor" fill="none" stroke-linecap="round"
-                                            stroke-linejoin="round">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <path d="M5 12l-2 0l9 -9l9 9l-2 0" />
-                                            <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
-                                            <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
-                                        </svg>
-                                    </span>
-                                    <span class="nav-link-title">
-                                        {{ __('Dashboard') }}
-                                    </span>
-                                </a>
-                            </li>
-
-
-                            <li class="nav-item {{ request()->is('products*') ? 'active' : null }}">
-                                <a class="nav-link" href="{{ route('products.index') }}">
-                                    <span
-                                        class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/home -->
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                            class="icon icon-tabler icon-tabler-packages" width="24"
-                                            height="24" viewBox="0 0 24 24" stroke-width="2"
-                                            stroke="currentColor" fill="none" stroke-linecap="round"
-                                            stroke-linejoin="round">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <path d="M7 16.5l-5 -3l5 -3l5 3v5.5l-5 3z" />
-                                            <path d="M2 13.5v5.5l5 3" />
-                                            <path d="M7 16.545l5 -3.03" />
-                                            <path d="M17 16.5l-5 -3l5 -3l5 3v5.5l-5 3z" />
-                                            <path d="M12 19l5 3" />
-                                            <path d="M17 16.5l5 -3" />
-                                            <path d="M12 13.5v-5.5l-5 -3l5 -3l5 3v5.5" />
-                                            <path d="M7 5.03v5.455" />
-                                            <path d="M12 8l5 -3" />
-                                        </svg>
-                                    </span>
-                                    <span class="nav-link-title">
-                                        {{ __('Products') }}
-                                    </span>
-                                </a>
-                            </li>
-
-
-                            <li class="nav-item dropdown {{ request()->is('orders*') ? 'active' : null }}">
-                                <a class="nav-link dropdown-toggle" href="#navbar-base" data-bs-toggle="dropdown"
-                                    data-bs-auto-close="outside" role="button" aria-expanded="false">
-                                    <span class="nav-link-icon d-md-none d-lg-inline-block">
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                            class="icon icon-tabler icon-tabler-package-export" width="24"
-                                            height="24" viewBox="0 0 24 24" stroke-width="2"
-                                            stroke="currentColor" fill="none" stroke-linecap="round"
-                                            stroke-linejoin="round">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <path d="M12 21l-8 -4.5v-9l8 -4.5l8 4.5v4.5" />
-                                            <path d="M12 12l8 -4.5" />
-                                            <path d="M12 12v9" />
-                                            <path d="M12 12l-8 -4.5" />
-                                            <path d="M15 18h7" />
-                                            <path d="M19 15l3 3l-3 3" />
-                                        </svg>
-                                    </span>
-                                    <span class="nav-link-title">
-                                        {{ __('Orders') }}
-                                    </span>
-                                </a>
-                                <div class="dropdown-menu">
-                                    <div class="dropdown-menu-columns">
-                                        <div class="dropdown-menu-column">
-                                            <a class="dropdown-item" href="{{ route('orders.index') }}">
-                                                {{ __('All') }}
-                                            </a>
-                                            <a class="dropdown-item" href="{{ route('orders.complete') }}">
-                                                {{ __('Completed') }}
-                                            </a>
-                                            <a class="dropdown-item" href="{{ route('orders.pending') }}">
-                                                {{ __('Pending') }}
-                                            </a>
-                                            <a class="dropdown-item" href="{{ route('due.index') }}">
-                                                {{ __('Due') }}
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-
-
-                            <li class="nav-item dropdown {{ request()->is('purchases*') ? 'active' : null }}">
-                                <a class="nav-link dropdown-toggle" href="#navbar-base" data-bs-toggle="dropdown"
-                                    data-bs-auto-close="outside" role="button" aria-expanded="false">
-                                    <span class="nav-link-icon d-md-none d-lg-inline-block">
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                            class="icon icon-tabler icon-tabler-package-import" width="24"
-                                            height="24" viewBox="0 0 24 24" stroke-width="2"
-                                            stroke="currentColor" fill="none" stroke-linecap="round"
-                                            stroke-linejoin="round">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <path d="M12 21l-8 -4.5v-9l8 -4.5l8 4.5v4.5" />
-                                            <path d="M12 12l8 -4.5" />
-                                            <path d="M12 12v9" />
-                                            <path d="M12 12l-8 -4.5" />
-                                            <path d="M22 18h-7" />
-                                            <path d="M18 15l-3 3l3 3" />
-                                        </svg>
-                                    </span>
-                                    <span class="nav-link-title">
-                                        {{ __('Purchases') }}
-                                    </span>
-                                </a>
-                                <div class="dropdown-menu">
-                                    <div class="dropdown-menu-columns">
-                                        <div class="dropdown-menu-column">
-                                            <a class="dropdown-item" href="{{ route('purchases.index') }}">
-                                                {{ __('All') }}
-                                            </a>
-                                            <a class="dropdown-item"
-                                                href="{{ route('purchases.approvedPurchases') }}">
-                                                {{ __('Approval') }}
-                                            </a>
-                                            <a class="dropdown-item"
-                                                href="{{ route('purchases.purchaseReport') }}">
-                                                {{ __('Daily Purchase Report') }}
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-
-
-
-                            <li class="nav-item {{ request()->is('quotations*') ? 'active' : null }}">
-                                <a class="nav-link" href="{{ route('quotations.index') }}">
-                                    <span
-                                        class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/home -->
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                            class="icon icon-tabler icon-tabler-file" width="24" height="24"
-                                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                                            fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <path d="M14 3v4a1 1 0 0 0 1 1h4" />
-                                            <path
-                                                d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
-                                        </svg>
-                                    </span>
-                                    <span class="nav-link-title">
-                                        {{ __('Quotations') }}
-                                    </span>
-                                </a>
-                            </li>
-
-
-
-                            <li
-                                class="nav-item dropdown {{ request()->is('suppliers*', 'customers*') ? 'active' : null }}">
-                                <a class="nav-link dropdown-toggle" href="#navbar-base" data-bs-toggle="dropdown"
-                                    data-bs-auto-close="outside" role="button" aria-expanded="false">
-                                    <span class="nav-link-icon d-md-none d-lg-inline-block">
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                            class="icon icon-tabler icon-tabler-layers-subtract" width="24"
-                                            height="24" viewBox="0 0 24 24" stroke-width="2"
-                                            stroke="currentColor" fill="none" stroke-linecap="round"
-                                            stroke-linejoin="round">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <path
-                                                d="M8 4m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z" />
-                                            <path d="M16 16v2a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2v-8a2 2 0 0 1 2 -2h2" />
-                                        </svg>
-                                    </span>
-                                    <span class="nav-link-title">
-                                        {{ __('Pages') }}
-                                    </span>
-                                </a>
-                                <div class="dropdown-menu">
-                                    <div class="dropdown-menu-columns">
-                                        <div class="dropdown-menu-column">
-                                            <a class="dropdown-item" href="{{ route('suppliers.index') }}">
-                                                {{ __('Suppliers') }}
-                                            </a>
-                                            <a class="dropdown-item" href="{{ route('customers.index') }}">
-                                                {{ __('Customers') }}
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-
-
-                            <li
-                                class="nav-item dropdown {{ request()->is('users*', 'categories*', 'units*') ? 'active' : null }}">
-                                <a class="nav-link dropdown-toggle" href="#navbar-base" data-bs-toggle="dropdown"
-                                    data-bs-auto-close="outside" role="button" aria-expanded="false">
-                                    <span class="nav-link-icon d-md-none d-lg-inline-block">
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                            class="icon icon-tabler icon-tabler-settings" width="24"
-                                            height="24" viewBox="0 0 24 24" stroke-width="2"
-                                            stroke="currentColor" fill="none" stroke-linecap="round"
-                                            stroke-linejoin="round">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <path
-                                                d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z" />
-                                            <path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
-                                        </svg>
-                                    </span>
-                                    <span class="nav-link-title">
-                                        {{ __('Settings') }}
-                                    </span>
-                                </a>
-                                <div class="dropdown-menu">
-                                    <div class="dropdown-menu-columns">
-                                        <div class="dropdown-menu-column">
-                                            {{-- <a class="dropdown-item" href="{{ route('users.index') }}">
-                                                    {{ __('Users') }}
-                                                </a> --}}
-                                            <a class="dropdown-item" href="{{ route('categories.index') }}">
-                                                {{ __('Categories') }}
-                                            </a>
-                                            <a class="dropdown-item" href="{{ route('units.index') }}">
-                                                {{ __('Units') }}
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-                        </ul>
-
-                        <div class="my-2 my-md-0 flex-grow-1 flex-md-grow-0 order-first order-md-last">
-                            <form action="./" method="get" autocomplete="off" novalidate>
-                                <div class="input-icon">
-                                    <span class="input-icon-addon">
-                                        <!-- Download SVG icon from http://tabler-icons.io/i/search -->
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24"
-                                            height="24" viewBox="0 0 24 24" stroke-width="2"
-                                            stroke="currentColor" fill="none" stroke-linecap="round"
-                                            stroke-linejoin="round">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
-                                            <path d="M21 21l-6 -6" />
-                                        </svg>
-                                    </span>
-                                    <input type="text" name="search" id="search" value=""
-                                        class="form-control" placeholder="Search…" aria-label="Search in website">
-                                </div>
-                            </form>
-                        </div>
+            <div class="sth-nav-dropdown {{ request()->is('purchases*') ? 'open' : '' }}">
+                <div class="sth-nav-dropdown-toggle {{ request()->is('purchases*') ? 'active' : '' }}" onclick="toggleDropdown(this)">
+                    <div class="sth-nav-left">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Purchases
                     </div>
+                    <svg class="sth-dropdown-arrow" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                </div>
+                <div class="sth-nav-dropdown-inner">
+                    <a href="{{ route('purchases.index') }}" class="sth-nav-item">All Purchases</a>
+                    <a href="{{ route('purchases.create') }}" class="sth-nav-item">New Purchase</a>
+                    <a href="{{ route('purchases.approvedPurchases') }}" class="sth-nav-item">Approved</a>
                 </div>
             </div>
-        </header>
 
-        <div class="page-wrapper">
-            <div>
-                @yield('content')
-            </div>
+            <a href="{{ route('quotations.index') }}"
+               class="sth-nav-item {{ request()->is('quotations*') ? 'active' : '' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                Quotations
+            </a>
 
-            <footer class="footer footer-transparent d-print-none">
-                <div class="container-xl">
-                    <div class="row text-center align-items-center flex-row-reverse">
-                        <div class="col-lg-auto ms-lg-auto">
-                            <ul class="list-inline list-inline-dots mb-0">
+            <a href="{{ route('expenses.index') }}"
+               class="sth-nav-item {{ request()->is('expenses*') ? 'active' : '' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                Expenses (Kharch)
+            </a>
 
-                                <li class="list-inline-item"><a href="https://github.com/awaisejaz"
-                                        target="_blank" class="link-secondary" rel="noopener">Source code</a></li>
-                                <li class="list-inline-item">
-                                    <a href="https://github.com/awaisejaz" target="_blank"
-                                        class="link-secondary" rel="noopener">
-                                        <!-- Download SVG icon from http://tabler-icons.io/i/heart -->
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                            class="icon text-pink icon-filled icon-inline" width="24"
-                                            height="24" viewBox="0 0 24 24" stroke-width="2"
-                                            stroke="currentColor" fill="none" stroke-linecap="round"
-                                            stroke-linejoin="round">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <path
-                                                d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572" />
-                                        </svg>
-                                        Sponsor
-                                    </a>
-                                </li>
-                                <li class="list-inline-item"><a href="mailto:awaisejaz575@gmail.com">awaisejaz575gmail.com</a></li>
-                            </ul>
-                        </div>
-                        <div class="col-12 col-lg-auto mt-3 mt-lg-0">
-                            <ul class="list-inline list-inline-dots mb-0">
-                                <li class="list-inline-item">
-                                    Copyright &copy; {{ now()->year }}
-                                    <a href="." class="link-secondary"></a>.
-                                    All rights reserved.
-                                </li>
-                                <li class="list-inline-item">
-                                    <a href="./changelog.html" class="link-secondary" rel="noopener">
-                                        v1.0.0
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
+            <a href="{{ route('report.daily') }}"
+               class="sth-nav-item {{ request()->is('report/daily*') ? 'active' : '' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Daily Report
+            </a>
+
+
+            <div class="sth-nav-section">People</div>
+
+            <a href="{{ route('customers.index') }}"
+               class="sth-nav-item {{ request()->is('customers*') ? 'active' : '' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Customers
+            </a>
+
+            <a href="{{ route('suppliers.index') }}"
+               class="sth-nav-item {{ request()->is('suppliers*') ? 'active' : '' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                Suppliers
+            </a>
+
+            <div class="sth-nav-section">Settings</div>
+
+            <a href="{{ route('categories.index') }}"
+               class="sth-nav-item {{ request()->is('categories*') ? 'active' : '' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                Categories
+            </a>
+
+            <a href="{{ route('units.index') }}"
+               class="sth-nav-item {{ request()->is('units*') ? 'active' : '' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                Units
+            </a>
+
+        </nav>
+
+        <!-- User footer -->
+        <div class="sth-sidebar-footer">
+            <div class="dropdown">
+                <div class="sth-user-card dropdown-toggle" data-bs-toggle="dropdown">
+                    <img src="{{ Auth::user()->photo ? asset('storage/profile/' . Auth::user()->photo) : asset('assets/img/illustrations/profiles/admin.jpg') }}"
+                         class="sth-user-avatar" alt="User">
+                    <div>
+                        <div class="sth-user-name">{{ Auth::user()->name }}</div>
+                        <div class="sth-user-role">Store Manager</div>
                     </div>
                 </div>
-            </footer>
+                <div class="dropdown-menu dropdown-menu-end mb-2">
+                    <a href="{{ route('profile.edit') }}" class="dropdown-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                        Account Settings
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <form action="{{ route('logout') }}" method="post" class="sth-logout-form">
+                        @csrf
+                        <button type="submit" class="dropdown-item text-danger">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                            Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="sth-main">
+
+        <!-- Top Bar -->
+        <div class="sth-topbar d-print-none">
+            <div class="d-flex align-items-center gap-3">
+                <button class="sth-topbar-btn d-md-none" onclick="document.getElementById('sth-sidebar').classList.toggle('open')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+                <div>
+                    <div class="sth-topbar-title">
+                        @yield('page-title', 'Dashboard')
+                    </div>
+                </div>
+            </div>
+            <div class="sth-topbar-right">
+                <a href="{{ route('orders.create') }}" class="btn btn-sm btn-primary d-none d-sm-flex align-items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    New Order
+                </a>
+                <div class="nav-item dropdown">
+                    <a href="#" class="sth-topbar-btn" data-bs-toggle="dropdown" aria-label="Notifications">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end">
+                        <span class="dropdown-header">Notifications</span>
+                        <a class="dropdown-item text-muted" href="#">No new notifications</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flash Messages -->
+        <div class="sth-content d-print-none" style="padding-bottom:0; padding-top: 16px;">
+            @if(session('success'))
+                <div class="sth-alert sth-alert-success">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    {{ session('success') }}
+                </div>
+            @endif
+            @if(session('error'))
+                <div class="sth-alert sth-alert-error">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    {{ session('error') }}
+                </div>
+            @endif
+        </div>
+
+        <!-- Page Content -->
+        <div class="sth-content">
+            @yield('content')
+        </div>
+
+        <!-- Footer -->
+        <footer class="sth-footer d-print-none flex-wrap gap-2">
+            <span>© {{ now()->year }} Saleem Tyre House — All rights reserved.</span>
+            <span class="d-flex align-items-center gap-2">
+                <a href="https://github.com/sponsors/awaisejaz" target="_blank" class="text-decoration-none text-muted d-flex align-items-center gap-1" rel="noopener">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="#ef4444" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                    Sponsor
+                </a>
+                <span>Built by <strong style="font-weight: 900; color: var(--sth-orange); font-size: 0.9rem; letter-spacing: 0.02em;">Awais Ejaz</strong></span>
+                <span>·</span>
+                <a href="https://github.com/awaisejaz/inventory-management" target="_blank" class="text-decoration-none text-muted d-flex align-items-center gap-1" rel="noopener">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.24c3-.34 6-1.54 6-6.16a5.5 5.5 0 0 0-1.64-3.92A5.4 5.4 0 0 0 18.2 4s-1.34-.43-4.38 1.64a15.7 15.7 0 0 0-8 0C2.78 3.57 1.44 4 1.44 4a5.4 5.4 0 0 0-.22 4.76A5.5 5.5 0 0 0 0 12.6c0 4.62 3 5.82 6 6.16A4.8 4.8 0 0 0 5 22v4"/><path d="M9 18c-5 1.5-5-2.5-7-3"/></svg>
+                    GitHub
+                </a>
+                <span>· v1.0.0</span>
+            </span>
+        </footer>
     </div>
 
     <!-- Libs JS -->
     @stack('page-libraries')
-    <!-- Tabler Core -->
     <script src="{{ asset('dist/js/tabler.min.js') }}" defer></script>
     <script src="{{ asset('dist/js/demo.min.js') }}" defer></script>
-    {{-- - Page Scripts - --}}
     @stack('page-scripts')
 
-    @livewireScripts
-</body>
+    <script src="{{ asset('vendor/livewire/livewire.js') }}" data-update-uri="{{ url('/livewire/update') }}" data-csrf="{{ csrf_token() }}"></script>
+    <script src="{{ asset('vendor/rappasoft/livewire-tables/js/laravel-livewire-tables.min.js') }}"></script>
+    <script src="{{ asset('vendor/rappasoft/livewire-tables/js/laravel-livewire-tables-thirdparty.min.js') }}"></script>
 
+    <script>
+        function toggleDropdown(el) {
+            el.parentElement.classList.toggle('open');
+        }
+    </script>
+</body>
 </html>

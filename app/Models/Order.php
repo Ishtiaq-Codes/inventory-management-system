@@ -26,7 +26,8 @@ class Order extends Model
         'pay',
         'due',
         "user_id",
-        "uuid"
+        "uuid",
+        "notes"
     ];
 
     protected $casts = [
@@ -48,9 +49,14 @@ class Order extends Model
 
     public function scopeSearch($query, $value): void
     {
-        $query->where('invoice_no', 'like', "%{$value}%")
-            ->orWhere('order_status', 'like', "%{$value}%")
-            ->orWhere('payment_type', 'like', "%{$value}%");
+        $query->where(function($q) use ($value) {
+            $q->where('invoice_no', 'like', "%{$value}%")
+              ->orWhere('order_status', 'like', "%{$value}%")
+              ->orWhere('payment_type', 'like', "%{$value}%")
+              ->orWhereHas('customer', function ($customerQuery) use ($value) {
+                  $customerQuery->where('name', 'like', "%{$value}%");
+              });
+        });
     }
 
      /**
@@ -61,5 +67,15 @@ class Order extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function getCustomerNameAttribute()
+    {
+        if ($this->customer && $this->customer->name === 'Walk-in Customer' && !empty($this->notes) && str_starts_with($this->notes, 'Walk-in: ')) {
+            $specificName = str_replace('Walk-in: ', '', $this->notes);
+            return $specificName . ' (Walk-in)';
+        }
+
+        return $this->customer ? $this->customer->name : 'Unknown';
     }
 }

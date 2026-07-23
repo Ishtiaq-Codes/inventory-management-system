@@ -82,20 +82,29 @@
 
                                         <div class="col-sm-6 col-md-6">
                                             <div class="mb-3">
-                                                <label for="category_id" class="form-label">
-                                                    Product category
-                                                    <span class="text-danger">*</span>
+                                                <label for="category_id" class="form-label d-flex justify-content-between">
+                                                    <span>Product category <span class="text-danger">*</span></span>
+                                                    <a href="javascript:void(0);" onclick="toggleCategoryCreate()" class="text-decoration-none small">+ Add new</a>
                                                 </label>
 
-                                                <select name="category_id" id="category_id"
-                                                    class="form-select @error('category_id') is-invalid @enderror">
-                                                    <option selected="" disabled="">Select a category:</option>
-                                                    @foreach ($categories as $category)
-                                                        <option value="{{ $category->id }}"
-                                                            @if (old('category_id', $product->category_id) == $category->id) selected="selected" @endif>
-                                                            {{ $category->name }}</option>
-                                                    @endforeach
-                                                </select>
+                                                <div id="category_select_container">
+                                                    <select name="category_id" id="category_id" class="form-select @error('category_id') is-invalid @enderror" required>
+                                                        <option value="" selected="" disabled="">Select a category:</option>
+                                                        @foreach ($categories as $category)
+                                                            <option value="{{ $category->id }}"
+                                                                @if (old('category_id', $product->category_id) == $category->id) selected="selected" @endif>
+                                                                {{ $category->name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+
+                                                <div id="category_create_container" style="display: none;" class="mt-2">
+                                                    <div class="input-group">
+                                                        <input type="text" id="new_category_name" class="form-control" placeholder="New category name">
+                                                        <button type="button" class="btn btn-primary" onclick="createCategory()">Save</button>
+                                                        <button type="button" class="btn btn-secondary" onclick="toggleCategoryCreate()">Cancel</button>
+                                                    </div>
+                                                </div>
 
                                                 @error('category_id')
                                                     <div class="invalid-feedback">
@@ -108,23 +117,33 @@
 
                                         <div class="col-sm-6 col-md-6">
                                             <div class="mb-3">
-                                                <label class="form-label" for="unit_id">
-                                                    {{ __('Unit') }}
-                                                    <span class="text-danger">*</span>
+                                                <label class="form-label d-flex justify-content-between" for="unit_id">
+                                                    <span>{{ __('Unit') }} <span class="text-danger">*</span></span>
+                                                    <a href="javascript:void(0);" onclick="toggleUnitCreate()" class="text-decoration-none small">+ Add new</a>
                                                 </label>
 
-                                                <select name="unit_id" id="unit_id"
-                                                    class="form-select @error('unit_id') is-invalid @enderror">
-                                                    <option selected="" disabled="">
-                                                        Select a unit:
-                                                    </option>
+                                                <div id="unit_select_container">
+                                                    <select name="unit_id" id="unit_id"
+                                                        class="form-select @error('unit_id') is-invalid @enderror" required>
+                                                        <option value="" selected="" disabled="">
+                                                            Select a unit:
+                                                        </option>
 
-                                                    @foreach ($units as $unit)
-                                                        <option value="{{ $unit->id }}"
-                                                            @if (old('unit_id', $product->unit_id) == $unit->id) selected="selected" @endif>
-                                                            {{ $unit->name }}</option>
-                                                    @endforeach
-                                                </select>
+                                                        @foreach ($units as $unit)
+                                                            <option value="{{ $unit->id }}"
+                                                                @if (old('unit_id', $product->unit_id) == $unit->id) selected="selected" @endif>
+                                                                {{ $unit->name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+
+                                                <div id="unit_create_container" style="display: none;" class="mt-2">
+                                                    <div class="input-group">
+                                                        <input type="text" id="new_unit_name" class="form-control" placeholder="New unit name">
+                                                        <button type="button" class="btn btn-primary" onclick="createUnit()">Save</button>
+                                                        <button type="button" class="btn btn-secondary" onclick="toggleUnitCreate()">Cancel</button>
+                                                    </div>
+                                                </div>
 
                                                 @error('unit_id')
                                                     <div class="invalid-feedback">
@@ -237,6 +256,7 @@
 
                                                 <select name="tax_type" id="tax_type"
                                                     class="form-select @error('tax_type') is-invalid @enderror">
+                                                    <option value="" disabled="">Select a tax type:</option>
                                                     @foreach (\App\Enums\TaxType::cases() as $taxType)
                                                         <option value="{{ $taxType->value }}"
                                                             @selected(old('tax_type', $product->tax_type) == $taxType->value)>
@@ -292,4 +312,92 @@
 
 @pushonce('page-scripts')
     <script src="{{ asset('assets/js/img-preview.js') }}"></script>
+    <script>
+        function toggleCategoryCreate() {
+            const selectContainer = document.getElementById('category_select_container');
+            const createContainer = document.getElementById('category_create_container');
+            if (createContainer.style.display === 'none') {
+                selectContainer.style.display = 'none';
+                createContainer.style.display = 'block';
+            } else {
+                selectContainer.style.display = 'block';
+                createContainer.style.display = 'none';
+            }
+        }
+
+        function createCategory() {
+            const name = document.getElementById('new_category_name').value;
+            if (!name) return alert('Please enter a category name');
+
+            fetch('{{ route('categories.store') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ name: name })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.category) {
+                    const select = document.getElementById('category_id');
+                    const option = document.createElement('option');
+                    option.value = data.category.id;
+                    option.text = data.category.name;
+                    option.selected = true;
+                    select.appendChild(option);
+                    document.getElementById('new_category_name').value = '';
+                    toggleCategoryCreate();
+                } else if (data.message) {
+                    alert(data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function toggleUnitCreate() {
+            const selectContainer = document.getElementById('unit_select_container');
+            const createContainer = document.getElementById('unit_create_container');
+            if (createContainer.style.display === 'none') {
+                selectContainer.style.display = 'none';
+                createContainer.style.display = 'block';
+            } else {
+                selectContainer.style.display = 'block';
+                createContainer.style.display = 'none';
+            }
+        }
+
+        function createUnit() {
+            const name = document.getElementById('new_unit_name').value;
+            if (!name) return alert('Please enter a unit name');
+            const shortCode = name.substring(0, 2).toUpperCase();
+
+            fetch('{{ route('units.store') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ name: name, short_code: shortCode })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.unit) {
+                    const select = document.getElementById('unit_id');
+                    const option = document.createElement('option');
+                    option.value = data.unit.id;
+                    option.text = data.unit.name;
+                    option.selected = true;
+                    select.appendChild(option);
+                    document.getElementById('new_unit_name').value = '';
+                    toggleUnitCreate();
+                } else if (data.message) {
+                    alert(data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
 @endpushonce

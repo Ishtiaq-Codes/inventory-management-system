@@ -49,7 +49,7 @@ class DueOrderController extends Controller
     public function update(Order $order, Request $request)
     {
         $rules = [
-            'pay' => 'required|numeric'
+            'pay' => ['required', 'numeric', 'min:1', 'max:' . $order->due]
         ];
 
         $validatedData = $request->validate($rules);
@@ -60,35 +60,21 @@ class DueOrderController extends Controller
         $paidDue = $mainDue - $validatedData['pay'];
         $paidPay = $mainPay + $validatedData['pay'];
 
+        // Safety clamp — never allow negative due
+        if ($paidDue < 0) {
+            $paidDue = 0;
+        }
+
         $order->update([
             'due' => $paidDue,
             'pay' => $paidPay
         ]);
-        // no more due
+
+        // no more due — mark order as complete
         if ($paidDue == 0) {
             $order->update([
                 'order_status' => 1
             ]);
-            $products = OrderDetails::where('order_id', $order->id)->get();
-
-            $stockAlertProducts = [];
-
-            foreach ($products as $product) {
-                $productEntity = Product::where('id', $product->product_id)->first();
-                $newQty = $productEntity->quantity - $product->quantity;
-                if ($newQty < $productEntity->quantity_alert) {
-                    $stockAlertProducts[] = $productEntity;
-                }
-                $productEntity->update(['quantity' => $newQty]);
-            }
-
-            if (count($stockAlertProducts) > 0) {
-                $listAdmin = [];
-                foreach (User::all('email') as $admin) {
-                    $listAdmin [] = $admin->email;
-                }
-                Mail::to($listAdmin)->send(new StockAlert($stockAlertProducts));
-            }
         }
 
         return redirect()

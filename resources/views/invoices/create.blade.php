@@ -41,7 +41,7 @@
                                         <div class="invoice-number">
                                             <h4 class="inv-title-1">Invoice date:</h4>
                                             <p class="invo-addr-1">
-                                                {{ Carbon\Carbon::now()->format('M d, Y') }}
+                                                {{ Carbon\Carbon::parse($purchase_date)->format('M d, Y') }}
                                             </p>
                                         </div>
                                     </div>
@@ -145,6 +145,8 @@
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <input type="hidden" name="customer_id" value="{{ $customer->id }}">
+                                        <input type="hidden" name="order_date" value="{{ $purchase_date }}">
+                                        <input type="hidden" name="notes" value="{{ $notes ?? '' }}">
 
                                         <x-input.index label="Customer" name="customer" value="{{ $customer->name }}" disabled/>
                                     </div>
@@ -156,8 +158,8 @@
                                             {{ __('Payment') }}
                                         </label>
 
-                                        <select class="form-control @error('payment_type') is-invalid @enderror" id="payment_type" name="payment_type">
-                                            <option selected="" disabled="">Select a payment:</option>
+                                        <select class="form-control @error('payment_type') is-invalid @enderror" id="payment_type" name="payment_type" required>
+                                            <option value="" selected="" disabled="">Select a payment:</option>
                                             <option value="HandCash">HandCash</option>
                                             <option value="Cheque">Cheque</option>
                                             <option value="Due">Due</option>

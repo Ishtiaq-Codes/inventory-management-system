@@ -18,6 +18,10 @@ class CustomerTable extends Component
 
     public $sortAsc = false;
 
+    public $startDate = '';
+
+    public $endDate = '';
+
     public function sortBy($field): void
     {
         if ($this->sortField === $field) {
@@ -39,6 +43,8 @@ class CustomerTable extends Component
                 ->withSum('orders','due')
                 ->withSum('orders','sub_total')
                 ->withSum('orders','vat')
+                ->when($this->startDate, fn($q) => $q->whereDate('created_at', '>=', $this->startDate))
+                ->when($this->endDate, fn($q) => $q->whereDate('created_at', '<=', $this->endDate))
                 ->search($this->search)
                 ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
                 ->paginate($this->perPage)

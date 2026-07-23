@@ -30,7 +30,7 @@ class SupplierController extends Controller
             $image = $request->file('photo')->store("supliers", "public");
         }
 
-        Supplier::create([
+        $supplier = Supplier::create([
             "user_id" => auth()->id(),
             "uuid" => Str::uuid(),
             'photo' => $image,
@@ -45,6 +45,14 @@ class SupplierController extends Controller
             'address' => $request->address,
         ]);
 
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'supplier' => $supplier,
+                'message' => 'New supplier has been created!'
+            ]);
+        }
+
         return redirect()
             ->route('suppliers.index')
             ->with('success', 'New supplier has been created!');
@@ -53,7 +61,9 @@ class SupplierController extends Controller
     public function show($uuid)
     {
         $supplier = Supplier::where("uuid", $uuid)->firstOrFail();
-        $supplier->loadMissing('purchases')->get();
+        $supplier->loadMissing(['purchases' => function($query) {
+            $query->orderBy('date', 'desc')->orderBy('created_at', 'desc');
+        }]);
 
         return view('suppliers.show', [
             'supplier' => $supplier
@@ -119,5 +129,38 @@ class SupplierController extends Controller
         return redirect()
             ->route('suppliers.index')
             ->with('success', 'Supplier has been deleted!');
+    }
+
+    public function storeOldBalance(\Illuminate\Http\Request $request, $uuid)
+    {
+        $request->validate([
+            'total_amount' => 'required|numeric|min:0.01',
+            'paid_amount' => 'required|numeric|min:0',
+            'date' => 'required|date',
+            'notes' => 'nullable|string'
+        ]);
+
+        $supplier = Supplier::where('uuid', $uuid)->firstOrFail();
+
+        $total = $request->total_amount;
+        $paid = $request->paid_amount;
+
+        \App\Models\Purchase::create([
+            'supplier_id' => $supplier->id,
+            'date' => $request->date,
+            'purchase_no' => 'OLD-BAL-' . strtoupper(Str::random(6)),
+            'status' => \App\Enums\PurchaseStatus::PENDING,
+            'total_amount' => $total,
+            'paid_amount' => $paid,
+            'created_by' => auth()->id(),
+            'updated_by' => auth()->id(),
+            'user_id' => auth()->id(),
+            'uuid' => Str::uuid(),
+            'notes' => $request->notes
+        ]);
+
+        return redirect()
+            ->route('suppliers.show', $supplier->uuid)
+            ->with('success', 'Old notebook record has been added successfully!');
     }
 }

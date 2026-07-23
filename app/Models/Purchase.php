@@ -26,7 +26,8 @@ class Purchase extends Model
         'updated_by',
         "user_id",
         "uuid",
-        "paid_amount"
+        "paid_amount",
+        "notes"
     ];
 
     protected $casts = [
@@ -58,9 +59,13 @@ class Purchase extends Model
 
     public function scopeSearch($query, $value): void
     {
-        $query->where('purchase_no', 'like', "%{$value}%")
-            ->orWhere('status', 'like', "%{$value}%")
-        ;
+        $query->where(function($q) use ($value) {
+            $q->where('purchase_no', 'like', "%{$value}%")
+              ->orWhere('status', 'like', "%{$value}%")
+              ->orWhereHas('supplier', function ($supplierQuery) use ($value) {
+                  $supplierQuery->where('name', 'like', "%{$value}%");
+              });
+        });
     }
      /**
      * Get the user that owns the Category

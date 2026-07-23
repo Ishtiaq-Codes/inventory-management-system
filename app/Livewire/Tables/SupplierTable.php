@@ -18,6 +18,10 @@ class SupplierTable extends Component
 
     public $sortAsc = false;
 
+    public $startDate = '';
+
+    public $endDate = '';
+
     public function sortBy($field): void
     {
         if($this->sortField === $field)
@@ -38,6 +42,8 @@ class SupplierTable extends Component
                 ->with(['purchases'])
                 ->withSum('purchases','paid_amount')
                 ->withSum('purchases','total_amount')
+                ->when($this->startDate, fn($q) => $q->whereDate('created_at', '>=', $this->startDate))
+                ->when($this->endDate, fn($q) => $q->whereDate('created_at', '<=', $this->endDate))
                 ->search($this->search)
                 ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
                 ->paginate($this->perPage)

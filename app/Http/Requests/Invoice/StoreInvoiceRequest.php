@@ -22,7 +22,8 @@ class StoreInvoiceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'customer_id' => 'required'
+            'customer_id' => 'required',
+            'notes' => 'nullable|string|max:500'
         ];
     }
 }

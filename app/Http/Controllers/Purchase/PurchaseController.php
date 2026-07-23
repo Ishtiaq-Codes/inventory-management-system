@@ -101,23 +101,25 @@ class PurchaseController extends Controller
         /*
          * TODO: Must validate that
          */
-        if (! $request->invoiceProducts == null)
-        {
-            $pDetails = [];
-
-            foreach ($request->invoiceProducts as $product)
+        DB::transaction(function () use ($request, $purchase) {
+            if (! $request->invoiceProducts == null)
             {
-                $pDetails['purchase_id']    = $purchase['id'];
-                $pDetails['product_id']     = $product['product_id'];
-                $pDetails['quantity']       = $product['quantity'];
-                $pDetails['unitcost']       = intval($product['unitcost']);
-                $pDetails['total']          = $product['total'];
-                $pDetails['created_at']     = Carbon::now();
+                $pDetails = [];
 
-                //PurchaseDetails::insert($pDetails);
-                $purchase->details()->insert($pDetails);
+                foreach ($request->invoiceProducts as $product)
+                {
+                    $pDetails['purchase_id']    = $purchase['id'];
+                    $pDetails['product_id']     = $product['product_id'];
+                    $pDetails['quantity']       = $product['quantity'];
+                    $pDetails['unitcost']       = intval($product['unitcost']);
+                    $pDetails['total']          = $product['total'];
+                    $pDetails['created_at']     = Carbon::now();
+
+                    //PurchaseDetails::insert($pDetails);
+                    $purchase->details()->insert($pDetails);
+                }
             }
-        }
+        });
 
         return redirect()
             ->route('purchases.index')
@@ -126,21 +128,23 @@ class PurchaseController extends Controller
 
     public function update($uuid, Request $request)
     {
-        $purchase =Purchase::where('uuid',$uuid)->firstOrFail();
-        $products = PurchaseDetails::where('purchase_id', $purchase->id)->get();
+        DB::transaction(function () use ($uuid, $request) {
+            $purchase =Purchase::where('uuid',$uuid)->firstOrFail();
+            $products = PurchaseDetails::where('purchase_id', $purchase->id)->get();
 
-        foreach ($products as $product)
-        {
-            Product::where('id', $product->product_id)
-                    ->update(['quantity' => DB::raw('quantity+'.$product->quantity)]);
-        }
+            foreach ($products as $product)
+            {
+                Product::where('id', $product->product_id)
+                        ->update(['quantity' => DB::raw('quantity+'.$product->quantity)]);
+            }
 
-        Purchase::findOrFail($purchase->id)
-            ->update([
-                'status' => PurchaseStatus::APPROVED,
-                'paid_amount' => $request->paid_amount,
-                'updated_by' => auth()->user()->id,
-            ]);
+            Purchase::findOrFail($purchase->id)
+                ->update([
+                    'status' => PurchaseStatus::APPROVED,
+                    'paid_amount' => $request->paid_amount,
+                    'updated_by' => auth()->user()->id,
+                ]);
+        });
 
         return redirect()
             ->back()

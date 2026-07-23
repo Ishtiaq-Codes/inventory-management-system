@@ -75,8 +75,7 @@
                             <label for="customer" class="form-label required">
                                 {{ __('Customer') }}
                             </label>
-                            <input type="text" id="customer" class="form-control" value="{{ $order->customer->name }}"
-                                disabled>
+                            <input type="text" id="customer" class="form-control" value="{{ $order->customer_name }}" disabled>
                         </div>
 
                         <div class="col">

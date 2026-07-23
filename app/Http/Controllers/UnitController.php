@@ -35,12 +35,16 @@ class UnitController extends Controller
 
     public function store(StoreUnitRequest $request)
     {
-        Unit::create([
+        $unit = Unit::create([
             "user_id" => auth()->id(),
             'name' => $request->name,
             'slug' => Str::slug($request->name),
             'short_code' => $request->short_code,
         ]);
+
+        if ($request->wantsJson()) {
+            return response()->json(['unit' => $unit]);
+        }
 
         return redirect()
             ->route('units.index')

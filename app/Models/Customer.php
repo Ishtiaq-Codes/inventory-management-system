@@ -45,9 +45,11 @@ class Customer extends Model
 
     public function scopeSearch($query, $value): void
     {
-        $query->where('name', 'like', "%{$value}%")
-            ->orWhere('email', 'like', "%{$value}%")
-            ->orWhere('phone', 'like', "%{$value}%");
+        $query->where(function($q) use ($value) {
+            $q->where('name', 'like', "%{$value}%")
+              ->orWhere('email', 'like', "%{$value}%")
+              ->orWhere('phone', 'like', "%{$value}%");
+        });
     }
      /**
      * Get the user that owns the Category

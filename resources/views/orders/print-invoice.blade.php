@@ -1,180 +1,203 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <title>
-        {{ config('app.name') }}
-    </title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
-    <!-- External CSS libraries -->
-    <link type="text/css" rel="stylesheet" href="{{ asset('assets/invoice/css/bootstrap.min.css') }}">
-    <link type="text/css" rel="stylesheet"
-        href="{{ asset('assets/invoice/fonts/font-awesome/css/font-awesome.min.css') }}">
-    <!-- Google fonts -->
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap"
-        rel="stylesheet">
-    <!-- Custom Stylesheet -->
-    <link type="text/css" rel="stylesheet" href="{{ asset('assets/invoice/css/style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt - {{ $order->invoice_no }}</title>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+            padding: 0;
+            background-color: #f6f6f6;
+            font-size: 12px;
+            color: #000;
+        }
+        .receipt-container {
+            width: 80mm;
+            max-width: 100%;
+            margin: 20px auto;
+            background: #fff;
+            padding: 15px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+        .text-center {
+            text-align: center;
+        }
+        .text-right {
+            text-align: right;
+        }
+        .text-left {
+            text-align: left;
+        }
+        .brand-name {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+        .store-info {
+            font-size: 12px;
+            margin-bottom: 15px;
+            border-bottom: 1px dashed #000;
+            padding-bottom: 10px;
+        }
+        .order-info {
+            margin-bottom: 15px;
+            border-bottom: 1px dashed #000;
+            padding-bottom: 10px;
+        }
+        .order-info p {
+            margin: 2px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+        th, td {
+            padding: 4px 0;
+        }
+        th {
+            border-bottom: 1px dashed #000;
+            border-top: 1px dashed #000;
+            text-align: left;
+        }
+        .totals {
+            border-top: 1px dashed #000;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+        .totals p {
+            margin: 4px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        .totals p.bold {
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            border-top: 1px dashed #000;
+            padding-top: 10px;
+        }
+        
+        /* Print Styles */
+        @media print {
+            body {
+                background: #fff;
+                margin: 0;
+                padding: 0;
+            }
+            .receipt-container {
+                width: 100%;
+                margin: 0;
+                padding: 0 5mm; /* Add safe margin for thermal printers */
+                box-shadow: none;
+                box-sizing: border-box;
+            }
+            .d-print-none {
+                display: none !important;
+            }
+            @page {
+                margin: 0;
+            }
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 8px 15px;
+            background-color: #000;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+            margin: 5px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-secondary {
+            background-color: #666;
+        }
+    </style>
 </head>
-
 <body>
-    <div class="invoice-16 invoice-content">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="invoice-inner-9" id="invoice_wrapper">
-                        <div class="invoice-top">
-                            <div class="row">
-                                <div class="col-lg-6 col-sm-6">
-                                    <div class="logo">
-                                        <h1>{{ Str::title(auth()->user()->store_name) }}</h1>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 col-sm-6">
-                                    <div class="invoice">
-                                        <h1>
-                                            Invoice # <span>{{ $order->invoice_no }}</span>
-                                        </h1>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="invoice-info">
-                            <div class="row">
-                                <div class="col-sm-6 mb-50">
-                                    <div class="invoice-number">
-                                        <h4 class="inv-title-1">
-                                            Invoice date:
-                                        </h4>
-                                        <p class="invo-addr-1">
-                                            {{ $order->order_date }}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-6 mb-50">
-                                    <h4 class="inv-title-1">Customer</h4>
-                                    <p class="inv-from-1">{{ $order->customer->name }}</p>
-                                    <p class="inv-from-1">{{ $order->customer->phone }}</p>
-                                    <p class="inv-from-1">{{ $order->customer->email }}</p>
-                                    <p class="inv-from-2">{{ $order->customer->address }}</p>
-                                </div>
-                                @php
-                                    $user = auth()->user();
-                                @endphp
-                                <div class="col-sm-6 text-end mb-50">
-                                    <h4 class="inv-title-1">Store</h4>
-                                    <p class="inv-from-1">{{ Str::title($user->store_name) }}</p>
-                                    <p class="inv-from-1">{{ $user->store_phone }}</p>
-                                    <p class="inv-from-1">{{ $user->store_email }}</p>
-                                    <p class="inv-from-2">{{ $user->store_address }}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="order-summary">
-                            <div class="table-outer">
-                                <table class="default-table invoice-table">
-                                    <thead>
-                                        <tr>
-                                            <th class="align-middle">Item</th>
-                                            <th class="align-middle text-center">Price</th>
-                                            <th class="align-middle text-center">Quantity</th>
-                                            <th class="align-middle text-center">Subtotal</th>
-                                        </tr>
-                                    </thead>
 
-                                    <tbody>
-                                        {{--                                            @foreach ($orderDetails as $item) --}}
-                                        @foreach ($order->details as $item)
-                                            <tr>
-                                                <td class="align-middle">
-                                                    {{ $item->product->name }}
-                                                </td>
-                                                <td class="align-middle text-center">
-                                                    {{ Number::currency($item->unitcost, 'PKR') }}
-                                                </td>
-                                                <td class="align-middle text-center">
-                                                    {{ $item->quantity }}
-                                                </td>
-                                                <td class="align-middle text-center">
-                                                    {{ Number::currency($item->total, 'PKR') }}
-                                                </td>
-                                            </tr>
-                                        @endforeach
+    <div class="receipt-container">
+        
+        <!-- Action Buttons (Hidden on Print) -->
+        <div class="text-center d-print-none" style="margin-bottom: 20px;">
+            <button onclick="window.print()" class="btn">🖨️ Print Receipt</button>
+            <a href="{{ route('orders.index') }}" class="btn btn-secondary">🔙 Back</a>
+        </div>
 
-                                        <tr>
-                                            <td colspan="3" class="text-end">
-                                                <strong>
-                                                    Subtotal
-                                                </strong>
-                                            </td>
-                                            <td class="align-middle text-center">
-                                                <strong>
-                                                    {{ Number::currency($order->sub_total, 'PKR') }}
-                                                </strong>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="3" class="text-end">
-                                                <strong>Tax</strong>
-                                            </td>
-                                            <td class="align-middle text-center">
-                                                <strong>
-                                                    {{ Number::currency($order->vat, 'PKR') }}
-                                                </strong>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="3" class="text-end">
-                                                <strong>Total</strong>
-                                            </td>
-                                            <td class="align-middle text-center">
-                                                <strong>
-                                                    {{ Number::currency($order->total, 'PKR') }}
-                                                </strong>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        {{-- <div class="invoice-informeshon-footer">
-                                <ul>
-                                    <li><a href="#">www.website.com</a></li>
-                                    <li><a href="mailto:sales@hotelempire.com">info@example.com</a></li>
-                                    <li><a href="tel:+088-01737-133959">+62 123 123 123</a></li>
-                                </ul>
-                            </div> --}}
-                    </div>
-                    <div class="invoice-btn-section clearfix d-print-none">
-                        <a href="javascript:window.print()" class="btn btn-lg btn-print">
-                            <i class="fa fa-print"></i>
-                            Print Invoice
-                        </a>
-                        <a id="invoice_download_btn" class="btn btn-lg btn-download">
-                            <i class="fa fa-download"></i>
-                            Download Invoice
-                        </a>
-                    </div>
+        @php
+            $user = auth()->user();
+        @endphp
 
-                    {{-- back button --}}
-                    <div class="invoice-btn-section clearfix d-print-none">
-                        <a href="{{ route('orders.index') }}" class="btn btn-lg btn-print">
-                            <i class="fa fa-arrow-left"></i>
-                            Back
-                        </a>
-                    </div>
-                </div>
+        <!-- Header -->
+        <div class="text-center">
+            <div class="brand-name">SALEEM TYRE HOUSE</div>
+            <div class="store-info">
+                {{ $user->store_phone }}<br>
+                {{ $user->store_address }}
             </div>
         </div>
-    </div>
-    <script src="{{ asset('assets/invoice/js/jquery.min.js') }}"></script>
-    <script src="{{ asset('assets/invoice/js/jspdf.min.js') }}"></script>
-    <script src="{{ asset('assets/invoice/js/html2canvas.js') }}"></script>
-    <script src="{{ asset('assets/invoice/js/app.js') }}"></script>
-</body>
 
+        <!-- Order Info -->
+        <div class="order-info">
+            <p><strong>Invoice:</strong> {{ $order->invoice_no }}</p>
+            <p><strong>Date:</strong> {{ $order->order_date ? \Carbon\Carbon::parse($order->order_date)->format('d M Y') : '' }}</p>
+            <p>
+                <strong>Customer:</strong> 
+                {{ $order->customer_name }}
+            </p>
+            @if($order->customer->phone && $order->customer->phone !== '0000000000')
+            <p><strong>Phone:</strong> {{ $order->customer->phone }}</p>
+            @endif
+        </div>
+
+        <!-- Items Table -->
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 50%;">Item</th>
+                    <th class="text-center" style="width: 20%;">Qty</th>
+                    <th class="text-right" style="width: 30%;">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($order->details as $item)
+                <tr>
+                    <td>{{ $item->product->name }}<br><small>{{ Number::currency($item->unitcost, 'Rs. ') }}</small></td>
+                    <td class="text-center">{{ $item->quantity }}</td>
+                    <td class="text-right">{{ Number::currency($item->total, 'Rs. ') }}</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+
+        <!-- Totals -->
+        <div class="totals">
+            <p><span>Subtotal:</span> <span>{{ Number::currency($order->sub_total, 'Rs. ') }}</span></p>
+            <p><span>Tax:</span> <span>{{ Number::currency($order->vat, 'Rs. ') }}</span></p>
+            <p class="bold"><span>Total:</span> <span>{{ Number::currency($order->total, 'Rs. ') }}</span></p>
+            <p><span>Paid ({{ $order->payment_type }}):</span> <span>{{ Number::currency($order->pay, 'Rs. ') }}</span></p>
+            @if($order->due > 0)
+            <p class="bold" style="color: #d9534f;"><span>Due:</span> <span>{{ Number::currency($order->due, 'Rs. ') }}</span></p>
+            @endif
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Thank you for your business!</p>
+            <p style="font-size: 10px; margin-top: 10px;">Software by Awais Ejaz</p>
+        </div>
+
+    </div>
+
+</body>
 </html>

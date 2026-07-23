@@ -52,7 +52,7 @@
                                 {{ $order->invoice_no }}
                             </td>
                             <td class="text-center">
-                                {{ $order->customer->name }}
+                                {{ $order->customer_name }}
                             </td>
                             <td class="text-center">
                                 {{ $order->order_date->format('d-m-Y') }}

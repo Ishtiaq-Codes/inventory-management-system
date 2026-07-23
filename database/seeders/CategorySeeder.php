@@ -16,38 +16,32 @@ class CategorySeeder extends Seeder
         $categories = collect([
             [
                 'id'    => 1,
-                'name'  => 'Bike Tyre Tube',
-                'slug'  => 'bike_tyre',
+                'name'  => 'Bike Tyres & Tubes',
+                'slug'  => 'bike_tyres_tubes',
                 'user_id' => 1,
             ],
             [
                 'id'    => 2,
-                'name'  => 'Car Tyre Tube',
-                'slug'  => 'car_tyre',
+                'name'  => 'Car Tyres & Tubes',
+                'slug'  => 'car_tyres_tubes',
                 'user_id' => 1,
             ],
             [
                 'id'    => 3,
-                'name'  => 'Auto Tyre Tube',
-                'slug'  => 'auto_tyre',
+                'name'  => 'Tractor & Heavy Duty',
+                'slug'  => 'tractor_heavy_duty',
                 'user_id' => 1,
             ],
             [
                 'id'    => 4,
-                'name'  => 'Tractor Tyre Tube',
-                'slug'  => 'tractor_tyre',
+                'name'  => 'Nozzles & Valves',
+                'slug'  => 'nozzles_valves',
                 'user_id' => 1,
             ],
             [
                 'id'    => 5,
-                'name'  => 'Trali Tyre Tube',
-                'slug'  => 'trali_tyre',
-                'user_id' => 1,
-            ],
-            [
-                'id'    => 6,
-                'name'  => 'Truck Tyre Tube',
-                'slug'  => 'truck_tyre',
+                'name'  => 'Accessories & Patches',
+                'slug'  => 'accessories_patches',
                 'user_id' => 1,
             ]
         ]);

@@ -90,6 +90,10 @@
                     </div>
 
                     <div class="card-footer text-end">
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addOldDebtModal">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-notebook" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 4h11a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-11a1 1 0 0 1 -1 -1v-14a1 1 0 0 1 1 -1m3 0v18" /><path d="M13 8l2 0" /><path d="M13 12l2 0" /></svg>
+                            {{ __('Add Old Notebook Debt') }}
+                        </button>
                         <a class="btn btn-info" href="{{ route('suppliers.index') }}">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrow-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l14 0" /><path d="M5 12l6 6" /><path d="M5 12l6 -6" /></svg>
                             {{ __('Back') }}
@@ -101,6 +105,182 @@
                 </div>
             </div>
         </div>
+
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">{{ __('Ledger / Purchase History') }}</h3>
+                    </div>
+                    
+                    @php
+                        $totalPurchases = $supplier->purchases->sum('total_amount');
+                        $totalPaid = $supplier->purchases->sum('paid_amount');
+                        $totalDue = $totalPurchases - $totalPaid;
+                    @endphp
+
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <div class="card bg-primary text-primary-fg">
+                                    <div class="card-body">
+                                        <div class="h1 mb-3">{{ Number::currency($totalPurchases, 'PKR') }}</div>
+                                        <div class="d-flex mb-2">
+                                            <div>Total Bought</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-success text-success-fg">
+                                    <div class="card-body">
+                                        <div class="h1 mb-3">{{ Number::currency($totalPaid, 'PKR') }}</div>
+                                        <div class="d-flex mb-2">
+                                            <div>Total Paid to Supplier</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-danger text-danger-fg">
+                                    <div class="card-body">
+                                        <div class="h1 mb-3">{{ Number::currency($totalDue, 'PKR') }}</div>
+                                        <div class="d-flex mb-2">
+                                            <div>Total Current Debt (Due)</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered card-table table-vcenter text-nowrap datatable">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Purchase No</th>
+                                        <th>Status</th>
+                                        <th>Products / Notes</th>
+                                        <th>Total</th>
+                                        <th>Paid</th>
+                                        <th>Due</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($supplier->purchases as $purchase)
+                                        @php
+                                            $due = $purchase->total_amount - $purchase->paid_amount;
+                                        @endphp
+                                        <tr>
+                                            <td>{{ $purchase->date->format('d-m-Y') }}</td>
+                                            <td>{{ $purchase->purchase_no }}</td>
+                                            <td>
+                                                @if($purchase->status->value == 1 || $purchase->status == 'Approved')
+                                                    <span class="badge bg-success text-white">Approved</span>
+                                                @else
+                                                    <span class="badge bg-warning text-white">Pending</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if(str_starts_with($purchase->purchase_no, 'OLD-BAL'))
+                                                    <span class="text-muted">Notebook Record: {{ $purchase->notes }}</span>
+                                                @else
+                                                    Standard Purchase
+                                                @endif
+                                            </td>
+                                            <td>{{ Number::currency($purchase->total_amount, 'PKR') }}</td>
+                                            <td>{{ Number::currency($purchase->paid_amount, 'PKR') }}</td>
+                                            <td>{{ Number::currency($due, 'PKR') }}</td>
+                                            <td>
+                                                <a href="{{ route('purchases.show', $purchase->uuid) }}" class="btn btn-sm btn-outline-primary">View</a>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="8" class="text-center">No records found.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+<!-- Modal for adding old notebook debt -->
+<div class="modal modal-blur fade" id="addOldDebtModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form action="{{ route('suppliers.storeOldBalance', $supplier->uuid) }}" method="POST">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Old Notebook Record</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-6 mb-3">
+                            <label class="form-label required">Total Bill Amount</label>
+                            <div class="input-group">
+                                <span class="input-group-text">Rs.</span>
+                                <input type="number" step="0.01" class="form-control" name="total_amount" id="supp_total_amount" required placeholder="e.g. 1000">
+                            </div>
+                        </div>
+                        <div class="col-lg-6 mb-3">
+                            <label class="form-label required">Amount Paid</label>
+                            <div class="input-group">
+                                <span class="input-group-text">Rs.</span>
+                                <input type="number" step="0.01" class="form-control" name="paid_amount" id="supp_paid_amount" required placeholder="e.g. 200">
+                            </div>
+                        </div>
+                        <div class="col-lg-12 mb-3">
+                            <label class="form-label">Debit Left (Due Amount)</label>
+                            <div class="input-group">
+                                <span class="input-group-text">Rs.</span>
+                                <input type="text" class="form-control bg-light" id="supp_due_amount" readonly placeholder="Calculated automatically...">
+                            </div>
+                            <small class="form-hint">This is the debt you still owe the supplier for this record.</small>
+                        </div>
+                        <div class="col-lg-12 mb-3">
+                            <label class="form-label required">Date of Record</label>
+                            <input type="date" class="form-control" name="date" required value="{{ date('Y-m-d') }}">
+                        </div>
+                        <div class="col-lg-12">
+                            <label class="form-label">Products / Description (Optional)</label>
+                            <textarea class="form-control" name="notes" rows="3" placeholder="e.g. Purchased 100 boxes of items..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn me-auto" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-success">Save Notebook Record</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@push('page-scripts')
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const totalInput = document.getElementById('supp_total_amount');
+        const paidInput = document.getElementById('supp_paid_amount');
+        const dueInput = document.getElementById('supp_due_amount');
+
+        function calculateDue() {
+            const total = parseFloat(totalInput.value) || 0;
+            const paid = parseFloat(paidInput.value) || 0;
+            const due = total - paid;
+            dueInput.value = due < 0 ? 0 : due.toFixed(2);
+        }
+
+        totalInput.addEventListener('input', calculateDue);
+        paidInput.addEventListener('input', calculateDue);
+    });
+</script>
+@endpush
 @endsection

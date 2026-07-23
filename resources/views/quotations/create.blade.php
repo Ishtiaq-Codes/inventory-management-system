@@ -77,8 +77,8 @@
                                             <span class="text-danger">*</span>
                                         </label>
 
-                                        <select class="form-select @error('customer_id') is-invalid @enderror" id="customer_id" name="customer_id">
-                                            <option selected="" disabled="">
+                                        <select class="form-select @error('customer_id') is-invalid @enderror" id="customer_id" name="customer_id" required>
+                                            <option value="" selected="" disabled="">
                                                 Select a customer:
                                             </option>
 

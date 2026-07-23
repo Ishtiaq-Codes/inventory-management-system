@@ -64,12 +64,20 @@
                 {{--- Unit Price ---}}
                 <td class="align-middle text-center">
                     @if($invoiceProduct['is_saved'])
-                        {{ $unit_cost = number_format($invoiceProduct['product_price'], 2) }}
+                        {{ number_format($invoiceProduct['product_price'], 2) }}
 
                         <input type="hidden"
                                name="invoiceProducts[{{$index}}][unitcost]"
-                               value="{{ $unit_cost }}"
+                               value="{{ $invoiceProduct['product_price'] }}"
                         >
+                    @else
+                        <input type="number"
+                               wire:model="invoiceProducts.{{$index}}.product_price"
+                               id="invoiceProducts[{{$index}}][unitcost]"
+                               class="form-control"
+                               min="0"
+                               placeholder="Buying price"
+                        />
                     @endif
                 </td>
 

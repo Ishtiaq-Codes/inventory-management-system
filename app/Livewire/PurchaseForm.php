@@ -82,7 +82,12 @@ class PurchaseForm extends Component
         $product = $this->allProducts->find($this->invoiceProducts[$index]['product_id']);
 
         $this->invoiceProducts[$index]['product_name'] = $product->name;
-        $this->invoiceProducts[$index]['product_price'] = $product->buying_price;
+
+        // Use user-entered price if set, otherwise default to product's stored buying price
+        if (empty($this->invoiceProducts[$index]['product_price'])) {
+            $this->invoiceProducts[$index]['product_price'] = $product->buying_price;
+        }
+
         $this->invoiceProducts[$index]['is_saved'] = true;
     }
 

@@ -2,4 +2,4 @@
 
 @section('title', __('Not Found'))
 @section('code', '404')
-@section('message', __('Not Found'))
+@section('message', __('The page or record you are looking for does not exist. It might have been moved or deleted.'))

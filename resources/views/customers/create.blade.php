@@ -92,6 +92,10 @@
                                         <x-input label="Account number" name="account_number" />
                                     </div>
 
+                                    <div class="col-md-12">
+                                        <x-input label="Old Notebook Page Number (Optional)" name="page_number" />
+                                    </div>
+
                                     <div class="mb-3">
                                         <label for="address" class="form-label required">
                                             Address

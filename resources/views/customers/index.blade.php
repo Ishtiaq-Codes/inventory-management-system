@@ -2,33 +2,16 @@
 
 @section('content')
 <div class="page-body">
-    @if(!$customers)
-        <x-empty
-            title="No customers found"
-            message="Try adjusting your search or filter to find what you're looking for."
-            button_label="{{ __('Add your first Customer') }}"
-            button_route="{{ route('customers.create') }}"
-        />
-    @else
-        <div class="container-xl">
+    <div class="container-xl">
+        @if (session('success'))
+            <div class="alert alert-success alert-dismissible" role="alert">
+                <h3 class="mb-1">Success</h3>
+                <p>{{ session('success') }}</p>
 
-            {{---
-            <div class="card">
-                <div class="card-body">
-                    <livewire:power-grid.customers-table/>
-                </div>
+                <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
             </div>
-            ---}}
-            @if (session('success'))
-                <div class="alert alert-success alert-dismissible" role="alert">
-                    <h3 class="mb-1">Success</h3>
-                    <p>{{ session('success') }}</p>
-
-                    <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
-                </div>
-            @endif
-            @livewire('tables.customer-table')
-        </div>
-    @endif
+        @endif
+        @livewire('tables.customer-table')
+    </div>
 </div>
 @endsection

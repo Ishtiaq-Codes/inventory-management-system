@@ -30,6 +30,7 @@ class StoreCustomerRequest extends FormRequest
             'account_number' => 'max:25',
             'bank_name' => 'max:25',
             'address' => 'string|max:100',
+            'page_number' => 'nullable|string|max:50',
         ];
     }
 }

@@ -121,7 +121,7 @@
 
                     <div class="card-body">
                         <div class="row mb-3">
-                            <div class="col-md-4">
+                            <div class="col-12 col-md-6 col-lg-4 mb-3">
                                 <div class="card bg-primary text-primary-fg">
                                     <div class="card-body">
                                         <div class="h1 mb-3">{{ Number::currency($totalPurchases, 'PKR') }}</div>
@@ -131,7 +131,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-12 col-md-6 col-lg-4 mb-3">
                                 <div class="card bg-success text-success-fg">
                                     <div class="card-body">
                                         <div class="h1 mb-3">{{ Number::currency($totalPaid, 'PKR') }}</div>
@@ -141,7 +141,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-12 col-md-6 col-lg-4 mb-3">
                                 <div class="card bg-danger text-danger-fg">
                                     <div class="card-body">
                                         <div class="h1 mb-3">{{ Number::currency($totalDue, 'PKR') }}</div>

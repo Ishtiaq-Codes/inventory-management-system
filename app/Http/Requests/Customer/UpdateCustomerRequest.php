@@ -57,6 +57,11 @@ class UpdateCustomerRequest extends FormRequest
                 'string',
                 'max:100'
             ],
+            'page_number' => [
+                'nullable',
+                'string',
+                'max:50'
+            ],
         ];
     }
 }

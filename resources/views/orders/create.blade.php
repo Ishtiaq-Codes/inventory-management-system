@@ -21,7 +21,7 @@
                         @csrf
                             <div class="row gx-3 mb-3">
                                 @include('partials.session')
-                                <div class="col-md-4">
+                                <div class="col-12 col-md-6 col-xl-4 mb-3">
                                     <label for="purchase_date" class="small my-1">
                                         {{ __('Date') }}
                                         <span class="text-danger">*</span>
@@ -40,7 +40,7 @@
                                     @enderror
                                 </div>
 
-                                <div class="col-md-4">
+                                <div class="col-12 col-md-6 col-xl-4 mb-3">
                                     <label class="small mb-1" for="customer_id">
                                         {{ __('Customer') }}
                                         <span class="text-danger">*</span>
@@ -68,7 +68,7 @@
                                             class="btn btn-sm mt-1 w-100"
                                             style="background:#f97316; color:#fff; font-weight:700; border-radius:6px;"
                                             onclick="selectWalkinCustomer()">
-                                        👤 Quick Cash Sale (Walk-in Customer)
+                                        👤 Quick Walk-in
                                     </button>
 
                                     {{-- Optional walk-in customer name input, hidden until button clicked --}}
@@ -77,10 +77,9 @@
                                             <span class="input-group-text" style="font-size:0.8rem;">Name</span>
                                             <input type="text" id="walkin-name-input"
                                                    class="form-control form-control-sm"
-                                                   placeholder="Customer name (optional, e.g. Asif, Ahmed...)"
+                                                   placeholder="Optional name..."
                                                    oninput="updateWalkinNote()">
                                         </div>
-                                        <small class="text-muted" style="font-size:0.72rem;">Leave blank to keep as "Walk-in Customer"</small>
                                     </div>
                                     {{-- Hidden notes field carrying the walk-in name --}}
                                     <input type="hidden" id="walkin-notes" name="notes" value="">
@@ -92,7 +91,7 @@
                                     @enderror
                                 </div>
 
-                                <div class="col-md-4">
+                                <div class="col-12 col-md-6 col-xl-4 mb-3">
                                     <label class="small mb-1" for="reference">
                                         {{ __('Reference') }}
                                     </label>
@@ -309,6 +308,10 @@
                         <div class="col-lg-12 mb-3">
                             <label class="form-label">Email (Optional)</label>
                             <input type="email" class="form-control" name="email" placeholder="Customer Email">
+                        </div>
+                        <div class="col-lg-12 mb-3">
+                            <label class="form-label">Notebook Page Number (Optional)</label>
+                            <input type="text" class="form-control" name="page_number" placeholder="e.g. 21">
                         </div>
                     </div>
                 </div>

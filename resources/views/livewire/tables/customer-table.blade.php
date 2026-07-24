@@ -72,6 +72,12 @@
                     </a>
                 </th>
                 <th scope="col" class="align-middle text-center">
+                    <a wire:click.prevent="sortBy('page_number')" href="#" role="button">
+                        {{ __('Notebook Page') }}
+                        @include('inclues._sort-icon', ['field' => 'page_number'])
+                    </a>
+                </th>
+                <th scope="col" class="align-middle text-center">
                     <a wire:click.prevent="sortBy('orders_count')" href="#" role="button">
                         {{ __('Order Counts') }}
                         @include('inclues._sort-icon', ['field' => 'orders_count'])
@@ -115,6 +121,9 @@
                     </td>
                     <td class="align-middle text-center">
                         {{ $customer->email }}
+                    </td>
+                    <td class="align-middle text-center">
+                        {{ $customer->page_number ?? '-' }}
                     </td>
                     <td class="align-middle text-center">
                         {{ $customer->orders_count }}

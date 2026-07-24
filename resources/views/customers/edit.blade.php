@@ -101,13 +101,15 @@
                                         </div>
 
                                         <div class="col-sm-6 col-md-6">
-                                            <x-input label="Account holder" name="account_holder" :value="old('account_holder', $customer->account_holder)"
-                                                :required="true" />
+                                            <x-input label="Account holder" name="account_holder" :value="old('account_holder', $customer->account_holder)" />
                                         </div>
 
                                         <div class="col-sm-6 col-md-6">
-                                            <x-input label="Account number" name="account_number" :value="old('account_number', $customer->account_number)"
-                                                :required="true" />
+                                            <x-input label="Account number" name="account_number" :value="old('account_number', $customer->account_number)" />
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <x-input label="Old Notebook Page Number (Optional)" name="page_number" :value="old('page_number', $customer->page_number)" />
                                         </div>
 
                                         <div class="col-md-12">

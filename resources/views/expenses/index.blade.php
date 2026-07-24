@@ -20,7 +20,7 @@
 
 @section('content')
 <div class="row g-3 mb-4">
-    <div class="col-sm-6 col-md-3">
+    <div class="col-12 col-md-6 col-lg-4 mb-3">
         <div class="card text-center" style="border-left:4px solid #dc2626;">
             <div class="card-body py-3">
                 <div class="text-muted small fw-semibold">Today's Expenses</div>
@@ -28,7 +28,7 @@
             </div>
         </div>
     </div>
-    <div class="col-sm-6 col-md-3">
+    <div class="col-12 col-md-6 col-lg-4 mb-3">
         <div class="card text-center" style="border-left:4px solid #d97706;">
             <div class="card-body py-3">
                 <div class="text-muted small fw-semibold">This Month's Expenses</div>

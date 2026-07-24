@@ -25,7 +25,8 @@ class Customer extends Model
         'account_number',
         'bank_name',
         "user_id",
-        "uuid"
+        "uuid",
+        "page_number"
     ];
 
     protected $casts = [
@@ -48,7 +49,8 @@ class Customer extends Model
         $query->where(function($q) use ($value) {
             $q->where('name', 'like', "%{$value}%")
               ->orWhere('email', 'like', "%{$value}%")
-              ->orWhere('phone', 'like', "%{$value}%");
+              ->orWhere('phone', 'like', "%{$value}%")
+              ->orWhere('page_number', 'like', "%{$value}%");
         });
     }
      /**

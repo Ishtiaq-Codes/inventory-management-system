@@ -47,34 +47,46 @@ class SupplierImportController extends Controller
                 $total_bill = (float) $sheet->getCell('G' . $row)->getValue();
                 $paid_amount = (float) $sheet->getCell('H' . $row)->getValue();
 
+                $type_raw = strtolower(trim((string)$type));
+                $valid_types = ['distributor', 'wholesaler', 'producer'];
+                $supplier_type = in_array($type_raw, $valid_types) ? $type_raw : 'wholesaler';
+
                 // 1. Create or Find Supplier
-                // Use phone or name to find them.
+                // Use name to find them. Leave phone null if empty to avoid unique constraint crashes.
                 $supplier = Supplier::firstOrCreate([
                     'user_id' => auth()->id(),
-                    'phone' => $phone ? (string) $phone : '0000000000',
                     'name' => (string) $name,
                 ], [
                     'uuid' => Str::uuid(),
+                    'phone' => $phone ? (string) $phone : null,
                     'email' => $email ? (string) $email : null,
                     'address' => (string) $address,
-                    'type' => $type ? (string) $type : 'Whole Seller',
+                    'type' => $supplier_type,
                     'shopname' => $shopname ? (string) $shopname : (string) $name,
                 ]);
 
                 // 2. Add Old Balance via Purchase if Total Bill is > 0
                 if ($total_bill > 0) {
-                    Purchase::create([
-                        'supplier_id' => $supplier->id,
-                        'date' => now()->format('Y-m-d'),
-                        'purchase_no' => 'OLD-BAL-' . strtoupper(Str::random(6)),
-                        'status' => 1, // 1 = Approved
-                        'total_amount' => $total_bill,
-                        'paid_amount' => $paid_amount,
-                        'created_by' => auth()->id(),
-                        'user_id' => auth()->id(),
-                        'uuid' => Str::uuid(),
-                        'notes' => 'Old Register Ledger Import',
-                    ]);
+                    
+                    // Prevent doubling debt if the same file is uploaded twice
+                    $existingPurchase = Purchase::where('supplier_id', $supplier->id)
+                                                ->where('notes', 'Old Register Ledger Import')
+                                                ->first();
+
+                    if (!$existingPurchase) {
+                        Purchase::create([
+                            'supplier_id' => $supplier->id,
+                            'date' => now()->format('Y-m-d'),
+                            'purchase_no' => 'OLD-BAL-' . strtoupper(Str::random(6)),
+                            'status' => 1, // 1 = Approved
+                            'total_amount' => $total_bill,
+                            'paid_amount' => $paid_amount,
+                            'created_by' => auth()->id(),
+                            'user_id' => auth()->id(),
+                            'uuid' => Str::uuid(),
+                            'notes' => 'Old Register Ledger Import',
+                        ]);
+                    }
                 }
             }
 

@@ -32,7 +32,7 @@
                                 <h4 class="alert-title">Instructions</h4>
                                 <div class="text-secondary">
                                     Please use the official template. Columns must be exactly:
-                                    <br><b>A:</b> Name | <b>B:</b> Phone | <b>C:</b> Address | <b>D:</b> Type (Retail/Wholesale) | <b>E:</b> Shop Name | <b>F:</b> Total Old Bill | <b>G:</b> Paid Amount
+                                    <br><b>A:</b> Name | <b>B:</b> Phone | <b>C:</b> Address | <b>D:</b> Type (Retail/Wholesale) | <b>E:</b> Shop Name | <b>F:</b> Total Old Bill | <b>G:</b> Paid Amount | <b>H:</b> Page Number (Optional)
                                 </div>
                             </div>
                         </div>

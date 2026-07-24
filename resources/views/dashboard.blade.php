@@ -290,7 +290,7 @@
 
 {{-- Quick Stats Row --}}
 <div class="row g-3 mb-4">
-    <div class="col-6 col-md-3">
+    <div class="col-12 col-sm-6 col-lg-3">
         <div class="dash-stat">
             <div class="dash-stat-header">
                 <div class="dash-stat-label">Products</div>
@@ -302,7 +302,7 @@
             <div class="dash-stat-sub">{{ $categories }} categories</div>
         </div>
     </div>
-    <div class="col-6 col-md-3">
+    <div class="col-12 col-sm-6 col-lg-3">
         <a href="{{ route('orders.index') }}" class="dash-stat">
             <div class="dash-stat-header">
                 <div class="dash-stat-label">Orders</div>
@@ -314,7 +314,7 @@
             <div class="dash-stat-sub">{{ $todayOrders }} today</div>
         </a>
     </div>
-    <div class="col-6 col-md-3">
+    <div class="col-12 col-sm-6 col-lg-3">
         <a href="{{ route('purchases.index') }}" class="dash-stat">
             <div class="dash-stat-header">
                 <div class="dash-stat-label">Purchases</div>
@@ -326,7 +326,7 @@
             <div class="dash-stat-sub">{{ $todayPurchases }} today</div>
         </a>
     </div>
-    <div class="col-6 col-md-3">
+    <div class="col-12 col-sm-6 col-lg-3">
         <a href="{{ route('quotations.index') }}" class="dash-stat">
             <div class="dash-stat-header">
                 <div class="dash-stat-label">Quotations</div>
@@ -346,28 +346,28 @@
     <div class="dash-section-line"></div>
 </div>
 <div class="row g-3 mb-4">
-    <div class="col-sm-6 col-md-3">
+    <div class="col-12 col-sm-6 col-lg-3">
         <div class="dash-stat" style="border-left: 4px solid #16a34a;">
             <div class="dash-stat-label">Total Sales Revenue</div>
             <div class="dash-stat-value" style="color:#16a34a; font-size:1.5rem;">Rs. {{ number_format($totalSales) }}</div>
             <div class="dash-stat-sub">All invoiced sales ever</div>
         </div>
     </div>
-    <div class="col-sm-6 col-md-3">
+    <div class="col-12 col-sm-6 col-lg-3">
         <a href="{{ route('due.index') }}" class="dash-stat" style="border-left: 4px solid #2563eb;">
             <div class="dash-stat-label">Total Receivables</div>
             <div class="dash-stat-value" style="color:#2563eb; font-size:1.5rem;">Rs. {{ number_format($totalReceivables) }}</div>
             <div class="dash-stat-sub">Customers still owe you this</div>
         </a>
     </div>
-    <div class="col-sm-6 col-md-3">
+    <div class="col-12 col-sm-6 col-lg-3">
         <div class="dash-stat" style="border-left: 4px solid #dc2626;">
             <div class="dash-stat-label">Total Payables</div>
             <div class="dash-stat-value" style="color:#dc2626; font-size:1.5rem;">Rs. {{ number_format($totalPayables) }}</div>
             <div class="dash-stat-sub">You still owe vendors this</div>
         </div>
     </div>
-    <div class="col-sm-6 col-md-3">
+    <div class="col-12 col-sm-6 col-lg-3">
         <a href="{{ route('products.index') }}" class="dash-stat" style="border-left: 4px solid #d97706;">
             <div class="dash-stat-label">Stock Value</div>
             <div class="dash-stat-value" style="color:#d97706; font-size:1.5rem;">Rs. {{ number_format($totalStockValue) }}</div>
@@ -382,7 +382,7 @@
     <div class="dash-section-line"></div>
 </div>
 <div class="row g-3 mb-4">
-    <div class="col-6 col-md-3">
+    <div class="col-12 col-sm-6 col-lg-3">
         <div class="dash-today">
             <div class="dash-today-dot" style="background:#16a34a;"></div>
             <div>
@@ -391,7 +391,7 @@
             </div>
         </div>
     </div>
-    <div class="col-6 col-md-3">
+    <div class="col-12 col-sm-6 col-lg-3">
         <div class="dash-today">
             <div class="dash-today-dot" style="background:#2563eb;"></div>
             <div>
@@ -400,7 +400,7 @@
             </div>
         </div>
     </div>
-    <div class="col-6 col-md-3">
+    <div class="col-12 col-sm-6 col-lg-3">
         <a href="{{ route('due.index') }}" style="text-decoration:none;">
             <div class="dash-today">
                 <div class="dash-today-dot" style="background:#dc2626;"></div>
@@ -413,7 +413,7 @@
             </div>
         </a>
     </div>
-    <div class="col-6 col-md-3">
+    <div class="col-12 col-sm-6 col-lg-3">
         <div class="dash-today">
             <div class="dash-today-dot" style="background:#d97706;"></div>
             <div>
@@ -422,7 +422,7 @@
             </div>
         </div>
     </div>
-    <div class="col-6 col-md-3">
+    <div class="col-12 col-sm-6 col-lg-3">
         <a href="{{ route('expenses.index') }}" style="text-decoration:none;">
             <div class="dash-today">
                 <div class="dash-today-dot" style="background:#7c3aed;"></div>

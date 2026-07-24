@@ -11,7 +11,7 @@
     'value'
 ])
 
-<div class="col-md-4">
+<div class="col-12 col-md-6 col-xl-4 mb-3">
     <label for="{{ $id }}" class="form-label required" >
         {{ $label }}
     </label>
@@ -53,7 +53,7 @@
 
 {{--- ---}}
 {{---
-<div class="col-md-4">
+<div class="col-12 col-md-6 col-xl-4 mb-3">
     <label class="small my-1" for="supplier_id">
         {{ __('Supplier') }}
         <span class="text-danger">*</span>

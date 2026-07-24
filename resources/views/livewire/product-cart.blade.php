@@ -103,7 +103,7 @@
     </div>
 
     <div class="row justify-content-md-end">
-        <div class="col-md-4">
+        <div class="col-12 col-md-6 col-xl-4">
             <div class="table-responsive">
                 <table class="table table-striped">
                     <tr>

@@ -31,7 +31,7 @@
                             <div class="card-body">
 
                                 <div class="row gx-3 mb-3">
-                                    <div class="col-md-4">
+                                    <div class="col-12 col-md-6 col-xl-4 mb-3">
                                         <label for="date" class="form-label required">
                                             {{ __('Purchase Date') }}
                                         </label>
@@ -52,7 +52,7 @@
                                     </div>
 
 
-                                    <div class="col-md-4">
+                                    <div class="col-12 col-md-6 col-xl-4 mb-3">
                                         <label class="form-label required" for="supplier_id">
                                             {{ __('Supplier') }}
                                         </label>
@@ -81,7 +81,7 @@
                                         @enderror
                                     </div>
 
-                                    <div class="col-md-4">
+                                    <div class="col-12 col-md-6 col-xl-4 mb-3">
                                         <label for="reference" class="form-label required">
                                             {{ __('Reference') }}
                                         </label>

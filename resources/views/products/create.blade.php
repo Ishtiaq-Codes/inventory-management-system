@@ -69,9 +69,14 @@
 
                                     <div class="col-sm-6 col-md-6">
                                         <div class="mb-3">
-                                            <label for="category_id" class="form-label">
-                                                Product category
-                                                <span class="text-danger">*</span>
+                                            <label for="category_id" class="form-label d-flex justify-content-between align-items-center">
+                                                <span>
+                                                    Product category
+                                                    <span class="text-danger">*</span>
+                                                </span>
+                                                <a href="#" data-bs-toggle="modal" data-bs-target="#modal-category" class="text-primary text-decoration-none small" style="font-size: 13px;">
+                                                    + Add New
+                                                </a>
                                             </label>
 
                                             @if ($categories->count() === 1)
@@ -112,9 +117,14 @@
 
                                     <div class="col-sm-6 col-md-6">
                                         <div class="mb-3">
-                                            <label class="form-label" for="unit_id">
-                                                {{ __('Unit') }}
-                                                <span class="text-danger">*</span>
+                                            <label class="form-label d-flex justify-content-between align-items-center" for="unit_id">
+                                                <span>
+                                                    {{ __('Unit') }}
+                                                    <span class="text-danger">*</span>
+                                                </span>
+                                                <a href="#" data-bs-toggle="modal" data-bs-target="#modal-unit" class="text-primary text-decoration-none small" style="font-size: 13px;">
+                                                    + Add New
+                                                </a>
                                             </label>
 
                                             @if ($units->count() === 1)
@@ -265,8 +275,150 @@
         </div>
     </div>
 </div>
+
+<!-- Category Modal -->
+<div class="modal modal-blur fade" id="modal-category" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form id="form-category">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title">New Category</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Category Name</label>
+                        <input type="text" class="form-control" name="name" id="new_category_name" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link link-secondary me-auto" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="btn-save-category">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Unit Modal -->
+<div class="modal modal-blur fade" id="modal-unit" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form id="form-unit">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title">New Unit</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Unit Name</label>
+                        <input type="text" class="form-control" name="name" id="new_unit_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Short Code</label>
+                        <input type="text" class="form-control" name="short_code" id="new_unit_short_code" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link link-secondary me-auto" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="btn-save-unit">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection
 
 @pushonce('page-scripts')
     <script src="{{ asset('assets/js/img-preview.js') }}"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Category AJAX
+        const formCategory = document.getElementById('form-category');
+        formCategory.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-save-category');
+            btn.disabled = true;
+            btn.innerHTML = 'Saving...';
+
+            fetch('{{ route("categories.store") }}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: document.getElementById('new_category_name').value
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.category) {
+                    const select = document.getElementById('category_id');
+                    const option = new Option(data.category.name, data.category.id, true, true);
+                    select.add(option);
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('modal-category'));
+                    modal.hide();
+                    formCategory.reset();
+                } else {
+                    alert('Error saving category (Validation failed)');
+                }
+            })
+            .catch(error => {
+                alert('Error saving category');
+                console.error(error);
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerHTML = 'Save';
+            });
+        });
+
+        // Unit AJAX
+        const formUnit = document.getElementById('form-unit');
+        formUnit.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-save-unit');
+            btn.disabled = true;
+            btn.innerHTML = 'Saving...';
+
+            fetch('{{ route("units.store") }}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: document.getElementById('new_unit_name').value,
+                    short_code: document.getElementById('new_unit_short_code').value
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.unit) {
+                    const select = document.getElementById('unit_id');
+                    const option = new Option(data.unit.name, data.unit.id, true, true);
+                    select.add(option);
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('modal-unit'));
+                    modal.hide();
+                    formUnit.reset();
+                } else {
+                    alert('Error saving unit (Validation failed)');
+                }
+            })
+            .catch(error => {
+                alert('Error saving unit');
+                console.error(error);
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerHTML = 'Save';
+            });
+        });
+    });
+    </script>
 @endpushonce

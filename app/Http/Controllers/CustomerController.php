@@ -45,6 +45,7 @@ class CustomerController extends Controller
             'account_number' => $request->account_number,
             'bank_name' => $request->bank_name,
             'address' => $request->address,
+            'page_number' => $request->page_number,
         ]);
 
         if ($request->wantsJson()) {
@@ -107,6 +108,7 @@ class CustomerController extends Controller
             'account_number' => $request->account_number,
             'bank_name' => $request->bank_name,
             'address' => $request->address,
+            'page_number' => $request->page_number,
         ]);
 
         return redirect()

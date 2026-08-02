@@ -140,10 +140,12 @@
 
         <!-- Header -->
         <div class="text-center">
+            <img src="{{ asset('assets/img/logo.jpeg') }}" alt="Logo" style="width: 55px; height: 55px; border-radius: 50%; margin-bottom: 8px; object-fit: cover;">
             <div class="brand-name">SALEEM TYRE HOUSE</div>
             <div class="store-info">
-                {{ $user->store_phone }}<br>
-                {{ $user->store_address }}
+                {{ $user->store_address }}<br>
+                <strong>Haji Naeem Ur Rehman:</strong> 0333-6881325<br>
+                <strong>Bilal Naeem:</strong> 0340-1745324
             </div>
         </div>
 

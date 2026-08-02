@@ -19,7 +19,8 @@ class InvoiceController extends Controller
             'customer' => $customer,
             'carts' => $carts,
             'purchase_date' => $request->get('purchase_date', now()->format('Y-m-d')),
-            'notes' => $request->get('notes')
+            'notes' => $request->get('notes'),
+            'custom_total' => $request->get('custom_total')
         ]);
     }
 }

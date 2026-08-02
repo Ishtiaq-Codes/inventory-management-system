@@ -24,10 +24,10 @@ class StoreSupplierRequest extends FormRequest
         return [
             'photo' => 'image|file|max:1024',
             'name' => 'required|string|max:50',
-            'email' => 'required|email|max:50',
+            'email' => 'nullable|email|max:50',
             'phone' => 'required|string|max:25',
-            'shopname' => 'required|string|max:50',
-            'type' => 'required|string|max:25',
+            'shopname' => 'nullable|string|max:50',
+            'type' => 'nullable|string|max:25',
             'account_holder' => 'max:50',
             'account_number' => 'max:25',
             'bank_name' => 'max:25',

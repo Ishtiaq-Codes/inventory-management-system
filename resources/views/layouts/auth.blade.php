@@ -55,9 +55,9 @@
             <div class="container container-tight py-4">
                 <div class="text-center mb-2">
                     <a href="{{ url('/') }}" class="navbar-brand navbar-brand-autodark">
-                        <h1 class="navbar-brand-image">Saleem Tyre House</h1>
-                        {{-- <img src="{{ asset('static/logo.svg') }}" width="110" height="32" alt="Tabler" class="navbar-brand-image"> --}}
-                    </a>
+                        <div class="text-center mb-4 mt-4">
+                            <img src="{{ asset('assets/img/logo.jpeg') }}" alt="Saleem Tyre House" style="width: 160px; height: auto; border-radius: 16px; box-shadow: 0 6px 16px rgba(0,0,0,0.15);">
+                        </div>                    </a>
                 </div>
 
                 @include('components.alert')

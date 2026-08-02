@@ -61,6 +61,8 @@ class OrderController extends Controller
             }
 
             // --- STEP 2: All stock OK, now create the order ---
+            $finalTotal = $request->filled('custom_total') ? str_replace(',', '', $request->custom_total) : str_replace(',', '', Cart::total());
+
             $order = Order::create([
                 'customer_id' => $request->customer_id,
                 'payment_type' => $request->payment_type,
@@ -70,14 +72,14 @@ class OrderController extends Controller
                 'total_products' => Cart::count(),
                 'sub_total' => Cart::subtotal(),
                 'vat' => 0,
-                'total' => Cart::total(),
+                'total' => $finalTotal,
                 'invoice_no' => IdGenerator::generate([
                     'table' => 'orders',
                     'field' => 'invoice_no',
                     'length' => 10,
                     'prefix' => 'INV-'
                 ]),
-                'due' => (Cart::total() - $request->pay),
+                'due' => ($finalTotal - $request->pay),
                 'user_id' => auth()->id(),
                 'uuid' => Str::uuid(),
                 'notes' => $request->notes,
@@ -116,15 +118,15 @@ class OrderController extends Controller
             // Clear cart
             Cart::destroy();
 
-            return null; // no error
+            return $order;
         });
 
-        if ($stockError) {
+        if (is_string($stockError)) {
             return redirect()->back()->with('error', $stockError);
         }
 
         return redirect()
-            ->route('orders.index')
+            ->route('orders.show', $stockError->uuid)
             ->with('success', 'Order has been created!');
     }
 
@@ -156,7 +158,32 @@ class OrderController extends Controller
     public function destroy($uuid)
     {
         $order = Order::where('uuid', $uuid)->firstOrFail();
+        
+        $restoredItems = [];
+        // Restore product stock
+        $orderDetails = OrderDetails::where('order_id', $order->id)->get();
+        foreach ($orderDetails as $detail) {
+            $product = Product::find($detail->product_id);
+            if ($product) {
+                $product->increment('quantity', $detail->quantity);
+                $restoredItems[] = $product->name . ' (+' . $detail->quantity . ')';
+            }
+        }
+
+        // Delete order details
+        OrderDetails::where('order_id', $order->id)->delete();
+        
+        // Delete the order itself
         $order->delete();
+
+        $message = 'Order has been successfully deleted.';
+        if (count($restoredItems) > 0) {
+            $message .= ' Stock restored for: ' . implode(', ', $restoredItems);
+        }
+
+        return redirect()
+            ->back()
+            ->with('success', $message);
     }
 
     public function downloadInvoice($uuid)

@@ -34,7 +34,7 @@ class UpdateSupplierRequest extends FormRequest
                 'max:50'
             ],
             'email' => [
-                'required',
+                'nullable',
                 'email',
                 'max:50'
             ],
@@ -44,12 +44,12 @@ class UpdateSupplierRequest extends FormRequest
                 'max:25'
             ],
             'shopname' => [
-                'required',
+                'nullable',
                 'string',
                 'max:50'
             ],
             'type' => [
-                'required',
+                'nullable',
                 'string',
                 'max:25'
             ],

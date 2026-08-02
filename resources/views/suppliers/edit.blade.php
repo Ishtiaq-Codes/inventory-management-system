@@ -47,17 +47,17 @@
                                 <div class="row row-cards">
                                     <div class="col-md-12">
                                         <x-input name="name" :value="old('name', $supplier->name)" :required="true"/>
-                                        <x-input name="email" label="Email address" :value="old('email', $supplier->email)" :required="true"/>
-                                        <x-input name="shopname" label="Shop name" :value="old('shopname', $supplier->shopname)" :required="true"/>
+                                        <x-input name="email" label="Email address" :value="old('email', $supplier->email)" />
+                                        <x-input name="shopname" label="Shop name" :value="old('shopname', $supplier->shopname)" />
                                         <x-input name="phone" label="Phone number" :value="old('phone', $supplier->phone)" :required="true"/>
                                     </div>
 
                                     <div class="col-sm-6 col-md-6">
-                                        <label for="type" class="form-label required">
+                                        <label for="type" class="form-label">
                                             Type of supplier
                                         </label>
 
-                                        <select class="form-select @error('type') is-invalid @enderror" id="type" name="type" required>
+                                        <select class="form-select @error('type') is-invalid @enderror" id="type" name="type">
                                             <option value="" disabled="">Select a type:</option>
                                             @foreach(\App\Enums\SupplierType::cases() as $supplierType)
                                             <option value="{{ $supplierType->value }}" @selected(old('type', $supplier->type) == $supplierType->value)>
@@ -74,7 +74,7 @@
                                     </div>
 
                                     <div class="col-sm-6 col-md-6">
-                                        <label for="bank_name" class="form-label required">
+                                        <label for="bank_name" class="form-label">
                                             Bank Name
                                         </label>
 

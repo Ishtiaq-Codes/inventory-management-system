@@ -158,26 +158,78 @@ class CustomerController extends Controller
         $paid = $request->paid_amount;
         $due = max(0, $total - $paid);
 
+        $existing = \App\Models\Order::where('customer_id', $customer->id)
+            ->where('invoice_no', 'like', 'OLD-BAL-%')
+            ->first();
+
+        if ($existing) {
+            $existing->update([
+                'pay' => $paid,
+                'order_date' => $request->date,
+                'sub_total' => $total,
+                'total' => $total,
+                'due' => $due,
+                'notes' => $request->notes
+            ]);
+            $msg = 'Old notebook record has been updated successfully!';
+        } else {
+            \App\Models\Order::create([
+                'customer_id' => $customer->id,
+                'payment_type' => 'Cash',
+                'pay' => $paid,
+                'order_date' => $request->date,
+                'order_status' => \App\Enums\OrderStatus::COMPLETE,
+                'total_products' => 0,
+                'sub_total' => $total,
+                'vat' => 0,
+                'total' => $total,
+                'invoice_no' => 'OLD-BAL-' . strtoupper(Str::random(6)),
+                'due' => $due,
+                'user_id' => auth()->id(),
+                'uuid' => Str::uuid(),
+                'notes' => $request->notes
+            ]);
+            $msg = 'Old notebook record has been added successfully!';
+        }
+
+        return redirect()
+            ->route('customers.show', $customer->uuid)
+            ->with('success', $msg);
+    }
+
+    /**
+     * Add a generic payment (Jama) to the Khata.
+     */
+    public function addPayment(\Illuminate\Http\Request $request, $uuid)
+    {
+        $request->validate([
+            'amount' => 'required|numeric|min:1',
+            'date' => 'required|date',
+            'notes' => 'nullable|string'
+        ]);
+
+        $customer = Customer::where('uuid', $uuid)->firstOrFail();
+
         \App\Models\Order::create([
             'customer_id' => $customer->id,
             'payment_type' => 'Cash',
-            'pay' => $paid,
+            'pay' => $request->amount,
             'order_date' => $request->date,
             'order_status' => \App\Enums\OrderStatus::COMPLETE,
             'total_products' => 0,
-            'sub_total' => $total,
+            'sub_total' => 0,
             'vat' => 0,
-            'total' => $total,
-            'invoice_no' => 'OLD-BAL-' . strtoupper(Str::random(6)),
-            'due' => $due,
+            'total' => 0,
+            'invoice_no' => 'PAY-' . strtoupper(Str::random(6)),
+            'due' => -($request->amount), // Payment reduces debt
             'user_id' => auth()->id(),
             'uuid' => Str::uuid(),
-            'notes' => $request->notes
+            'notes' => $request->notes ?: 'Payment Received (Khata Jama)'
         ]);
 
         return redirect()
             ->route('customers.show', $customer->uuid)
-            ->with('success', 'Old notebook record has been added successfully!');
+            ->with('success', 'Payment received successfully!');
     }
 
     /**

@@ -34,7 +34,7 @@ class UpdateCustomerRequest extends FormRequest
                 'max:50'
             ],
             'email' => [
-                'required',
+                'nullable',
                 'email',
                 'max:50'
             ],

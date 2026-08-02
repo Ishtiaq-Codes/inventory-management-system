@@ -14,7 +14,7 @@ class OrderTable extends Component
 
     public $search = '';
 
-    public $sortField = 'invoice_no';
+    public $sortField = 'created_at';
 
     public $sortAsc = false;
 

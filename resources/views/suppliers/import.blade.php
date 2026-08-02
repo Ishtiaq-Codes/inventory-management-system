@@ -32,7 +32,7 @@
                                 <h4 class="alert-title">Instructions</h4>
                                 <div class="text-secondary">
                                     Please use the official template. Columns must be exactly:
-                                    <br><b>A:</b> Name (Required) | <b>B:</b> Phone | <b>C:</b> Email | <b>D:</b> Address | <b>E:</b> Type (Distributor/Whole Seller) | <b>F:</b> Shop Name | <b>G:</b> Total Bill (Owed to Vendor) | <b>H:</b> Paid Amount
+                                    <br><b>A:</b> Name (Required) | <b>B:</b> Phone | <b>C:</b> Email (Optional) | <b>D:</b> Address | <b>E:</b> Type (Optional) | <b>F:</b> Shop Name (Optional) | <b>G:</b> Total Bill (Owed to Vendor) | <b>H:</b> Paid Amount
                                     <br><small><i>Leave any optional fields completely blank if you don't have them!</i></small>
                                 </div>
                             </div>

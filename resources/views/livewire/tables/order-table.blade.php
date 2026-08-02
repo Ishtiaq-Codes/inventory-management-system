@@ -143,10 +143,8 @@
                             <x-button.show class="btn-icon" route="{{ route('orders.show', $order->uuid) }}" />
                             <x-button.print class="btn-icon"
                                 route="{{ route('order.downloadInvoice', $order->uuid) }}" />
-                            @if ($order->order_status === \App\Enums\OrderStatus::PENDING)
-                                <x-button.delete class="btn-icon" route="{{ route('orders.cancel', $order) }}"
-                                    onclick="return confirm('Are you sure to cancel invoice no. {{ $order->invoice_no }} ?')" />
-                            @endif
+                            <x-button.delete class="btn-icon" route="{{ route('orders.destroy', $order->uuid) }}"
+                                onclick="return confirm('WARNING: Are you sure you want to completely DELETE invoice no. {{ $order->invoice_no }}? This will remove it from all business calculations and return the items to stock.')" />
                         </td>
                     </tr>
                 @empty

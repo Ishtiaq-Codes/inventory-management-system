@@ -1,5 +1,22 @@
 @extends('layouts.tabler')
 
+@pushonce('page-styles')
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.css" rel="stylesheet">
+    <style>
+        .ts-control { border-top-right-radius: 0 !important; border-bottom-right-radius: 0 !important; }
+        .input-group > .ts-wrapper { flex: 1 1 auto; width: 1%; }
+        /* Fix dropdown overlapping and visibility */
+        .ts-dropdown {
+            z-index: 9999 !important;
+            background: #fff;
+            border: 1px solid #dce1e7;
+            border-radius: 4px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        #walkin-btn { position: relative; z-index: 1; }
+    </style>
+@endpushonce
+
 @section('content')
 <div class="page-body">
     <div class="container-xl">
@@ -190,9 +207,15 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td colspan="4" class="text-end">Total</td>
-                                            <td class="text-center">
+                                            <td colspan="4" class="text-end fw-bold">Total (Calculated)</td>
+                                            <td class="text-center fw-bold">
                                                 {{ Cart::total() }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="4" class="text-end text-primary fw-bold" style="vertical-align: middle;">Final Negotiated Total (Optional)</td>
+                                            <td class="text-center">
+                                                <input type="number" step="0.01" name="custom_total" form="invoiceForm" class="form-control text-center text-primary fw-bold" placeholder="Leave blank to use calculated total" style="min-width: 120px;">
                                             </td>
                                         </tr>
                                     </tbody>
@@ -215,6 +238,9 @@
                         List Product
                     </div>
                     <div class="card-body">
+                        <div class="col-lg-12 mb-3">
+                            <input type="text" id="productSearch" class="form-control" placeholder="Search product by name...">
+                        </div>
                         <div class="col-lg-12">
                             <div class="table-responsive">
                                 <table class="table table-striped table-bordered align-middle">
@@ -228,7 +254,7 @@
                                             <th scope="col">Action</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody id="productTableBody">
                                         @forelse ($products as $product)
                                         <tr>
                                             {{---
@@ -363,8 +389,15 @@
                         const option = document.createElement('option');
                         option.value = data.customer.id;
                         option.text = data.customer.name;
-                        option.selected = true;
-                        select.appendChild(option);
+                        // Update TomSelect if it exists
+                        let ts = select.tomselect;
+                        if (ts) {
+                            ts.addOption({value: data.customer.id, text: data.customer.name});
+                            ts.setValue(data.customer.id);
+                        } else {
+                            option.selected = true;
+                            select.appendChild(option);
+                        }
 
                         // Close modal and reset
                         const modal = bootstrap.Modal.getInstance(document.getElementById('addCustomerModal'));
@@ -408,7 +441,18 @@
                     opt = new Option(data.name, data.id);
                     select.appendChild(opt);
                 }
-                select.value = data.id;
+                // Update TomSelect if exists
+                let ts = select.tomselect;
+                if(ts) {
+                    ts.addOption({value: data.id, text: data.name});
+                    ts.setValue(data.id);
+                } else {
+                    select.value = data.id;
+                }
+                
+                // Save to session storage
+                sessionStorage.setItem('pos_customer_id', data.id);
+                
                 btn.textContent = '✅ Walk-in Customer Selected';
                 btn.style.background = '#16a34a';
                 // Show the optional name input
@@ -428,5 +472,60 @@
             const notesField = document.getElementById('walkin-notes');
             notesField.value = name ? 'Walk-in: ' + name : '';
         }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Customer Search Dropdown
+            let customerSelect = new TomSelect("#customer_id", {
+                create: false,
+                sortField: {
+                    field: "text",
+                    direction: "asc"
+                }
+            });
+
+            // Restore state from sessionStorage
+            let savedCustomer = sessionStorage.getItem('pos_customer_id');
+            if (savedCustomer) {
+                customerSelect.setValue(savedCustomer);
+            }
+            
+            let savedWalkinName = sessionStorage.getItem('pos_walkin_name');
+            if (savedWalkinName) {
+                document.getElementById('walkin-name-input').value = savedWalkinName;
+                document.getElementById('walkin-notes').value = 'Walk-in: ' + savedWalkinName;
+                document.getElementById('walkin-name-row').style.display = 'block';
+            }
+
+            // Save state on change
+            customerSelect.on('change', function(val) {
+                sessionStorage.setItem('pos_customer_id', val);
+            });
+
+            document.getElementById('walkin-name-input').addEventListener('input', function(e) {
+                sessionStorage.setItem('pos_walkin_name', e.target.value);
+            });
+
+            // Clear session storage on successful invoice creation
+            document.getElementById('invoiceForm').addEventListener('submit', function() {
+                sessionStorage.removeItem('pos_customer_id');
+                sessionStorage.removeItem('pos_walkin_name');
+            });
+
+            // Product List Search
+            document.getElementById('productSearch').addEventListener('keyup', function() {
+                let filter = this.value.toLowerCase();
+                let rows = document.querySelectorAll('#productTableBody tr');
+                rows.forEach(row => {
+                    let text = row.querySelector('td:first-child').textContent.toLowerCase();
+                    if(text.includes(filter)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        });
     </script>
 @endpushonce

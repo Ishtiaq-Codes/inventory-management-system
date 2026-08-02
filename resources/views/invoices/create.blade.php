@@ -95,10 +95,14 @@
                                                     <strong>{{ Cart::tax() }}</strong>
                                                 </td>
                                             </tr>
-                                            <tr>
                                                 <td colspan="3" class="text-end"><strong>Total</strong></td>
                                                 <td class="text-center">
-                                                    <strong>{{ Cart::total() }}</strong>
+                                                    @if(isset($custom_total) && $custom_total != '')
+                                                        <span style="text-decoration: line-through; color: #888; font-size: 0.85em;">{{ Cart::total() }}</span><br>
+                                                        <strong class="text-primary">{{ Number::currency($custom_total, 'PKR') }}</strong>
+                                                    @else
+                                                        <strong>{{ Cart::total() }}</strong>
+                                                    @endif
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -147,6 +151,7 @@
                                         <input type="hidden" name="customer_id" value="{{ $customer->id }}">
                                         <input type="hidden" name="order_date" value="{{ $purchase_date }}">
                                         <input type="hidden" name="notes" value="{{ $notes ?? '' }}">
+                                        <input type="hidden" name="custom_total" value="{{ $custom_total ?? '' }}">
 
                                         <x-input.index label="Customer" name="customer" value="{{ $customer->name }}" disabled/>
                                     </div>

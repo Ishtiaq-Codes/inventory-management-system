@@ -414,18 +414,8 @@
     <!-- Sidebar -->
     <aside class="sth-sidebar" id="sth-sidebar">
 
-        <!-- Logo -->
-        <a href="{{ route('dashboard') }}" class="sth-logo">
-            <div class="sth-logo-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/>
-                    <path d="M12 2v3m0 14v3M2 12h3m14 0h3M4.93 4.93l2.12 2.12m9.9 9.9 2.12 2.12M4.93 19.07l2.12-2.12m9.9-9.9 2.12-2.12"/>
-                </svg>
-            </div>
-            <div class="sth-logo-text">
-                <span class="sth-logo-title">Saleem Tyre House</span>
-                <span class="sth-logo-subtitle">Inventory & Finance</span>
-            </div>
+        <a href="{{ route('dashboard') }}" class="sth-logo" style="display: flex; justify-content: center; padding: 25px 0 15px 0;">
+            <img src="{{ asset('assets/img/logo.jpeg') }}" alt="Saleem Tyre House" style="width: 140px; height: auto; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
         </a>
 
         <!-- Navigation -->

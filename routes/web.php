@@ -75,6 +75,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('/customers', CustomerController::class);
 
     Route::post('/customers/{uuid}/old-balance', [CustomerController::class, 'storeOldBalance'])->name('customers.storeOldBalance');
+    Route::post('/customers/{uuid}/payment', [CustomerController::class, 'addPayment'])->name('customers.addPayment');
     Route::get('/suppliers/import', [\App\Http\Controllers\Supplier\SupplierImportController::class, 'create'])->name('suppliers.import');
     Route::post('/suppliers/import', [\App\Http\Controllers\Supplier\SupplierImportController::class, 'store'])->name('suppliers.import.store');
     Route::resource('/suppliers', \App\Http\Controllers\SupplierController::class);
@@ -108,7 +109,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // SHOW ORDER
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::put('/orders/update/{order}', [OrderController::class, 'update'])->name('orders.update');
-    Route::delete('/orders/cancel/{order}', [OrderController::class, 'cancel'])->name('orders.cancel');
+    Route::delete('/orders/delete/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
 
     // DUES
     Route::get('due/orders/', [DueOrderController::class, 'index'])->name('due.index');

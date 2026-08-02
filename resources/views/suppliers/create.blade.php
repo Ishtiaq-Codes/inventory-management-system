@@ -55,20 +55,20 @@
                                     <div class="col-md-12">
                                         <x-input name="name" :required="true" />
 
-                                        <x-input name="email" label="Email address" :required="true" />
+                                        <x-input name="email" label="Email address" />
 
-                                        <x-input name="shopname" label="Shop name" :required="true" />
+                                        <x-input name="shopname" label="Shop name" />
 
                                         <x-input name="phone" label="Phone number" :required="true" />
                                     </div>
 
 
                                     <div class="col-sm-6 col-md-6">
-                                        <label for="type" class="form-label required">
+                                        <label for="type" class="form-label">
                                             Type of supplier
                                         </label>
 
-                                        <select class="form-select @error('type') is-invalid @enderror" id="type" name="type" required>
+                                        <select class="form-select @error('type') is-invalid @enderror" id="type" name="type">
                                             <option value="" selected="" disabled="">Select a type:</option>
 
                                             @foreach(\App\Enums\SupplierType::cases() as $supplierType)
@@ -86,7 +86,7 @@
                                     </div>
 
                                     <div class="col-sm-6 col-md-6">
-                                        <label for="bank_name" class="form-label required">
+                                        <label for="bank_name" class="form-label">
                                             Bank Name
                                         </label>
 

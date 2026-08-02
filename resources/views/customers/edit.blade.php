@@ -59,8 +59,7 @@
                                         <div class="col-md-12">
                                             <x-input name="name" :value="old('name', $customer->name)" :required="true" />
 
-                                            <x-input label="Email address" name="email" :value="old('email', $customer->email)"
-                                                :required="true" />
+                                            <x-input label="Email address" name="email" :value="old('email', $customer->email)" />
                                         </div>
 
                                         <div class="col-sm-6 col-md-6">

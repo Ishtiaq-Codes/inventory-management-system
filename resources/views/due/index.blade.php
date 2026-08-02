@@ -28,6 +28,16 @@
                     <x-action.create route="{{ route('orders.create') }}" />
                 </div>
             </div>
+            <div class="card-body border-bottom py-3">
+                <div class="d-flex">
+                    <div class="ms-auto text-muted">
+                        Search:
+                        <div class="ms-2 d-inline-block">
+                            <input type="text" id="dueSearchInput" class="form-control form-control-sm" placeholder="Search customer, invoice..." aria-label="Search orders">
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="table-responsive">
                 <table class="table table-bordered card-table table-vcenter text-nowrap datatable">
                     <thead class="thead-light">
@@ -86,3 +96,23 @@
     @endif
 </div>
 @endsection
+
+@push('page-scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('dueSearchInput');
+        const tbody = document.querySelector('.datatable tbody');
+        if (!searchInput || !tbody) return;
+        
+        const rows = tbody.querySelectorAll('tr');
+
+        searchInput.addEventListener('keyup', function (e) {
+            const term = e.target.value.toLowerCase();
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(term) ? '' : 'none';
+            });
+        });
+    });
+</script>
+@endpush

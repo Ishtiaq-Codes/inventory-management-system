@@ -129,17 +129,12 @@ class PurchaseController extends Controller
     {
         DB::transaction(function () use ($uuid, $request) {
             $purchase =Purchase::where('uuid',$uuid)->firstOrFail();
-            $products = PurchaseDetails::where('purchase_id', $purchase->id)->get();
-
-            foreach ($products as $product)
-            {
-                Product::where('id', $product->product_id)
-                        ->update(['quantity' => DB::raw('quantity+'.$product->quantity)]);
-            }
+            
+            // Note: We deliberately do NOT increment stock here, because it is already correctly incremented in the store() method.
 
             Purchase::findOrFail($purchase->id)
                 ->update([
-                    'status' => PurchaseStatus::APPROVED,
+                    'status' => \App\Enums\PurchaseStatus::APPROVED,
                     'paid_amount' => $request->paid_amount,
                     'updated_by' => auth()->user()->id,
                 ]);

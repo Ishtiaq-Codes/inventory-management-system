@@ -90,7 +90,11 @@
                     </div>
 
                     <div class="card-footer text-end">
-                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addOldDebtModal">
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addSupplierPaymentModal">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-cash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><rect x="7" y="9" width="14" height="10" rx="2" /><circle cx="14" cy="14" r="2" /><path d="M17 9v-2a2 2 0 0 0 -2 -2h-10a2 2 0 0 0 -2 2v6a2 2 0 0 0 2 2h2" /></svg>
+                            {{ __('Receive Payment (Jama)') }}
+                        </button>
+                        <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#addOldDebtModal">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-notebook" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 4h11a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-11a1 1 0 0 1 -1 -1v-14a1 1 0 0 1 1 -1m3 0v18" /><path d="M13 8l2 0" /><path d="M13 12l2 0" /></svg>
                             {{ __('Add Old Notebook Debt') }}
                         </button>
@@ -185,15 +189,37 @@
                                             <td>
                                                 @if(str_starts_with($purchase->purchase_no, 'OLD-BAL'))
                                                     <span class="text-muted">Notebook Record: {{ $purchase->notes }}</span>
+                                                @elseif(str_starts_with($purchase->purchase_no, 'PAY-'))
+                                                    <span class="text-success fw-bold">Payment (Jama): {{ $purchase->notes }}</span>
                                                 @else
                                                     Standard Purchase
                                                 @endif
                                             </td>
-                                            <td>{{ Number::currency($purchase->total_amount, 'PKR') }}</td>
-                                            <td>{{ Number::currency($purchase->paid_amount, 'PKR') }}</td>
-                                            <td>{{ Number::currency($due, 'PKR') }}</td>
                                             <td>
-                                                <a href="{{ route('purchases.show', $purchase->uuid) }}" class="btn btn-sm btn-outline-primary">View</a>
+                                                @if(str_starts_with($purchase->purchase_no, 'PAY-'))
+                                                    <span class="text-muted">-</span>
+                                                @else
+                                                    {{ Number::currency($purchase->total_amount, 'PKR') }}
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if(str_starts_with($purchase->purchase_no, 'PAY-'))
+                                                    <span class="text-success fw-bold">{{ Number::currency($purchase->paid_amount, 'PKR') }}</span>
+                                                @else
+                                                    {{ Number::currency($purchase->paid_amount, 'PKR') }}
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if(str_starts_with($purchase->purchase_no, 'PAY-'))
+                                                    <span class="text-success fw-bold">-{{ Number::currency($purchase->paid_amount, 'PKR') }}</span>
+                                                @else
+                                                    {{ Number::currency($due, 'PKR') }}
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if(!str_starts_with($purchase->purchase_no, 'PAY-') && !str_starts_with($purchase->purchase_no, 'OLD-BAL'))
+                                                    <a href="{{ route('purchases.show', $purchase->uuid) }}" class="btn btn-sm btn-outline-primary">View</a>
+                                                @endif
                                             </td>
                                         </tr>
                                     @empty
@@ -258,6 +284,50 @@
                 <div class="modal-footer">
                     <button type="button" class="btn me-auto" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-success">Save Notebook Record</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for adding payment (Jama) -->
+<div class="modal modal-blur fade" id="addSupplierPaymentModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form action="{{ route('suppliers.addPayment', $supplier->uuid) }}" method="POST">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title text-success">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-cash me-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><rect x="7" y="9" width="14" height="10" rx="2" /><circle cx="14" cy="14" r="2" /><path d="M17 9v-2a2 2 0 0 0 -2 -2h-10a2 2 0 0 0 -2 2v6a2 2 0 0 0 2 2h2" /></svg>
+                        Receive Payment (Jama)
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        Record a payment you are making to <strong>{{ $supplier->name }}</strong>. This will reduce your total debt balance.
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12 mb-3">
+                            <label class="form-label required">Payment Amount</label>
+                            <div class="input-group">
+                                <span class="input-group-text">PKR</span>
+                                <input type="number" step="0.01" class="form-control" name="amount" required placeholder="e.g. 5000">
+                            </div>
+                        </div>
+                        <div class="col-lg-12 mb-3">
+                            <label class="form-label required">Date of Payment</label>
+                            <input type="date" class="form-control" name="date" required value="{{ date('Y-m-d') }}">
+                        </div>
+                        <div class="col-lg-12">
+                            <label class="form-label">Payment Notes (Optional)</label>
+                            <textarea class="form-control" name="notes" rows="2" placeholder="e.g. Paid via Easypaisa or Cash deposit"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn me-auto" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Record Payment</button>
                 </div>
             </form>
         </div>

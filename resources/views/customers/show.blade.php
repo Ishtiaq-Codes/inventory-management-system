@@ -243,7 +243,14 @@
                                                     <td class="fw-bold text-primary">{{ Number::currency($runningBalance, 'PKR') }}</td>
                                                     <td>
                                                         @if(str_starts_with($order->invoice_no, 'INV-'))
-                                                            <a href="{{ route('orders.show', $order->uuid) }}" class="btn btn-sm btn-outline-primary">View Order</a>
+                                                            <a href="{{ route('orders.show', $order->uuid) }}" class="btn btn-sm btn-outline-primary mb-1">View</a>
+                                                            <form action="{{ route('orders.destroy', $order->uuid) }}" method="POST" class="d-inline-block">
+                                                                @csrf
+                                                                @method('delete')
+                                                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('WARNING: Are you sure you want to completely DELETE this order? This will remove it from all business calculations and return the items to stock.')">
+                                                                    Delete
+                                                                </button>
+                                                            </form>
                                                         @endif
                                                     </td>
                                                 </tr>

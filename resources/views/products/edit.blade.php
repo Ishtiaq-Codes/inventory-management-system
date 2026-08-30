@@ -199,8 +199,7 @@
                                                     {{ __('Quantity') }}
                                                 </label>
 
-                                                <input class="form-control" name="quantity" type="text" readonly value="{{ old('quantity', $product->quantity) }}"  required="true" aria-required="true" style="color: var(--tblr-secondary);background-color: var(--tblr-bg-surface-secondary); opacity: 1;"/>
-
+                                                <input class="form-control" name="quantity" type="number" min="0" value="{{ old('quantity', $product->quantity) }}" required="true" aria-required="true" />
 
                                                 {{-- <input type="text" id="quantity" name="quantity"
                                                     class="form-control"

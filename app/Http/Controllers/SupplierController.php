@@ -163,4 +163,36 @@ class SupplierController extends Controller
             ->route('suppliers.show', $supplier->uuid)
             ->with('success', 'Old notebook record has been added successfully!');
     }
+
+    /**
+     * Add a generic payment (Jama) to the Supplier Khata.
+     */
+    public function addPayment(\Illuminate\Http\Request $request, $uuid)
+    {
+        $request->validate([
+            'amount' => 'required|numeric|min:1',
+            'date' => 'required|date',
+            'notes' => 'nullable|string'
+        ]);
+
+        $supplier = Supplier::where('uuid', $uuid)->firstOrFail();
+
+        \App\Models\Purchase::create([
+            'supplier_id' => $supplier->id,
+            'date' => $request->date,
+            'purchase_no' => 'PAY-' . strtoupper(Str::random(6)),
+            'status' => \App\Enums\PurchaseStatus::APPROVED, // Approved automatically
+            'total_amount' => 0, // No new bill added
+            'paid_amount' => $request->amount, // Payment received
+            'created_by' => auth()->id(),
+            'updated_by' => auth()->id(),
+            'user_id' => auth()->id(),
+            'uuid' => Str::uuid(),
+            'notes' => $request->notes ?: 'Payment Sent (Khata Jama)'
+        ]);
+
+        return redirect()
+            ->route('suppliers.show', $supplier->uuid)
+            ->with('success', 'Payment recorded successfully!');
+    }
 }

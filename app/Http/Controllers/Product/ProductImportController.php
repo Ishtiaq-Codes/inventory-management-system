@@ -77,24 +77,40 @@ class ProductImportController extends Controller
                     'prefix' => 'PC'
                 ]);
 
-                // 4. Create Product
-                Product::firstOrCreate([
-                    'name' => (string) $name,
-                    'category_id' => $category->id,
-                    'unit_id' => $unit->id,
-                ], [
-                    'slug' => Str::slug((string) $name),
-                    'code' => $product_code,
-                    'quantity' => $quantity,
-                    'quantity_alert' => $quantity_alert,
-                    'buying_price' => $buying_price,
-                    'selling_price' => $selling_price,
-                    'tax' => $tax,
-                    'tax_type' => 1, // Default to Exclusive
-                    'notes' => 'Imported via Excel',
-                    'user_id' => auth()->id(),
-                    'uuid' => Str::uuid(),
-                ]);
+                // 4. Create or Update Product
+                $product = Product::where('name', (string) $name)->first();
+                
+                if ($product) {
+                    // Update existing product
+                    $product->update([
+                        'category_id' => $category->id,
+                        'unit_id' => $unit->id,
+                        'quantity' => $quantity, // Overwrite with new quantity from Excel
+                        'quantity_alert' => $quantity_alert,
+                        'buying_price' => $buying_price,
+                        'selling_price' => $selling_price,
+                        'tax' => $tax,
+                        'notes' => 'Updated via Excel Import',
+                    ]);
+                } else {
+                    // Create new product
+                    Product::create([
+                        'name' => (string) $name,
+                        'category_id' => $category->id,
+                        'unit_id' => $unit->id,
+                        'slug' => Str::slug((string) $name),
+                        'code' => $product_code,
+                        'quantity' => $quantity,
+                        'quantity_alert' => $quantity_alert,
+                        'buying_price' => $buying_price,
+                        'selling_price' => $selling_price,
+                        'tax' => $tax,
+                        'tax_type' => 1, // Default to Exclusive
+                        'notes' => 'Imported via Excel',
+                        'user_id' => auth()->id(),
+                        'uuid' => Str::uuid(),
+                    ]);
+                }
             }
 
         } catch (Exception $e) {

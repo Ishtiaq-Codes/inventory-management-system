@@ -82,6 +82,8 @@
                             </td>
                             <td class="text-center">
                                 <x-button.edit class="btn-icon" route="{{ route('due.edit', $order) }}"/>
+                                <x-button.delete class="btn-icon" route="{{ route('orders.destroy', $order->uuid) }}"
+                                    onclick="return confirm('WARNING: Are you sure you want to completely DELETE invoice no. {{ $order->invoice_no }}? This will remove it from all business calculations and return the items to stock.')" />
                             </td>
                         </tr>
                       @endforeach

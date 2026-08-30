@@ -41,16 +41,10 @@ class PurchaseController extends Controller
 
     public function show($uuid)
     {
-        $purchase = Purchase::where('id',$uuid)->firstOrFail();
-        // N+1 Problem if load 'createdBy', 'updatedBy',
-        $purchase->loadMissing(['supplier', 'details'])->get();
+        $purchase = Purchase::with(['supplier', 'details.product'])->where('uuid', $uuid)->firstOrFail();
 
-        $purchase->with(['supplier', 'details'])->get();
-        $products = PurchaseDetails::where('purchase_id', $purchase->id)->get();
-
-        return view('purchases.details-purchase', [
-            'purchase' => $purchase,
-            'products' => $products
+        return view('purchases.show', [
+            'purchase' => $purchase
         ]);
     }
 
@@ -115,8 +109,11 @@ class PurchaseController extends Controller
                     $pDetails['total']          = $product['total'];
                     $pDetails['created_at']     = Carbon::now();
 
-                    //PurchaseDetails::insert($pDetails);
                     $purchase->details()->insert($pDetails);
+
+                    // Increase product stock
+                    Product::where('id', $product['product_id'])
+                           ->update(['quantity' => DB::raw('quantity+'.$product['quantity'])]);
                 }
             }
         });

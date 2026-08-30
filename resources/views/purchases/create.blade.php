@@ -136,8 +136,8 @@
                             <input type="text" class="form-control" name="name" required placeholder="Supplier Name">
                         </div>
                         <div class="col-lg-6 mb-3">
-                            <label class="form-label required">Email</label>
-                            <input type="email" class="form-control" name="email" required placeholder="Supplier Email">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email" placeholder="Supplier Email">
                         </div>
                         <div class="col-lg-6 mb-3">
                             <label class="form-label required">Phone</label>
@@ -150,8 +150,9 @@
                         <div class="col-lg-6 mb-3">
                             <label class="form-label required">Type</label>
                             <select class="form-select" name="type" required>
-                                <option value="Distributor">Distributor</option>
-                                <option value="Whole Seller">Whole Seller</option>
+                                @foreach(\App\Enums\SupplierType::cases() as $supplierType)
+                                    <option value="{{ $supplierType->value }}">{{ $supplierType->label() }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="col-lg-12 mb-3">

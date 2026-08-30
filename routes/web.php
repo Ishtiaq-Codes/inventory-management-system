@@ -80,6 +80,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/suppliers/import', [\App\Http\Controllers\Supplier\SupplierImportController::class, 'store'])->name('suppliers.import.store');
     Route::resource('/suppliers', \App\Http\Controllers\SupplierController::class);
     Route::post('/suppliers/{uuid}/old-balance', [SupplierController::class, 'storeOldBalance'])->name('suppliers.storeOldBalance');
+    Route::post('/suppliers/{uuid}/payment', [SupplierController::class, 'addPayment'])->name('suppliers.addPayment');
     Route::resource('/categories', CategoryController::class);
     Route::resource('/units', UnitController::class);
 

@@ -29,7 +29,7 @@ class DashboardController extends Controller
         $quotations = Quotation::where("user_id", auth()->id())->count();
 
         // All Time Financials
-        $totalStockValue = Product::where("user_id", auth()->id())->selectRaw('SUM(buying_price * quantity) as stock_cost')->value('stock_cost') ?? 0;
+        $totalStockValue = (Product::where("user_id", auth()->id())->selectRaw('SUM(buying_price * quantity) as stock_cost')->value('stock_cost') ?? 0) / 100;
         $totalReceivables = Order::where("user_id", auth()->id())->sum('due');
         $totalPayables = Purchase::where("user_id", auth()->id())->selectRaw('SUM(total_amount - paid_amount) as total_payable')->value('total_payable') ?? 0;
         $totalSales = Order::where("user_id", auth()->id())->sum('total');

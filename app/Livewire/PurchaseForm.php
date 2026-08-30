@@ -106,10 +106,8 @@ class PurchaseForm extends Component
         if (count($parts) == 2 && $parts[1] == 'product_id') {
             $index = $parts[0];
             if ($value) {
-                $product = current(array_filter((array)$this->allProducts, function($e) use($value) { return $e->id == $value; }));
-                if (!$product) {
-                    $product = $this->allProducts->find($value);
-                }
+                // Fetch product directly from DB to avoid Livewire dehydration issues
+                $product = \App\Models\Product::find($value);
                 
                 if ($product) {
                     $this->invoiceProducts[$index]['product_price'] = $product->buying_price;

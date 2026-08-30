@@ -29,20 +29,20 @@ class DashboardController extends Controller
         $quotations = Quotation::where("user_id", auth()->id())->count();
 
         // All Time Financials
-        $totalStockValue = Product::selectRaw('SUM(buying_price * quantity) as stock_cost')->value('stock_cost') ?? 0;
-        $totalReceivables = Order::sum('due');
-        $totalPayables = Purchase::selectRaw('SUM(total_amount - paid_amount) as total_payable')->value('total_payable') ?? 0;
-        $totalSales = Order::sum('total');
-        $totalPurchases = Purchase::sum('total_amount');
+        $totalStockValue = Product::where("user_id", auth()->id())->selectRaw('SUM(buying_price * quantity) as stock_cost')->value('stock_cost') ?? 0;
+        $totalReceivables = Order::where("user_id", auth()->id())->sum('due');
+        $totalPayables = Purchase::where("user_id", auth()->id())->selectRaw('SUM(total_amount - paid_amount) as total_payable')->value('total_payable') ?? 0;
+        $totalSales = Order::where("user_id", auth()->id())->sum('total');
+        $totalPurchases = Purchase::where("user_id", auth()->id())->sum('total_amount');
 
         // Total Business Value: Stock + Receivables + Cash - Payables
         $totalBusinessValue = $totalStockValue + $totalSales - $totalPurchases;
 
         // Today's Activity
-        $todaySalesAmount    = Order::whereDate('order_date', today()->format('Y-m-d'))->sum('total');
-        $todayReceivedAmount = Order::whereDate('order_date', today()->format('Y-m-d'))->sum('pay');
-        $todayCreditAmount   = Order::whereDate('order_date', today()->format('Y-m-d'))->sum('due');
-        $todayPurchasesAmount = Purchase::whereDate('date', today()->format('Y-m-d'))->sum('total_amount');
+        $todaySalesAmount    = Order::where("user_id", auth()->id())->whereDate('order_date', today()->format('Y-m-d'))->sum('total');
+        $todayReceivedAmount = Order::where("user_id", auth()->id())->whereDate('order_date', today()->format('Y-m-d'))->sum('pay');
+        $todayCreditAmount   = Order::where("user_id", auth()->id())->whereDate('order_date', today()->format('Y-m-d'))->sum('due');
+        $todayPurchasesAmount = Purchase::where("user_id", auth()->id())->whereDate('date', today()->format('Y-m-d'))->sum('total_amount');
         $todayExpensesAmount  = Expense::where('user_id', auth()->id())
                                     ->whereDate('date', today()->format('Y-m-d'))
                                     ->sum('amount');

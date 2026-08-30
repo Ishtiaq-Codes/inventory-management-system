@@ -111,9 +111,11 @@ class PurchaseController extends Controller
 
                     $purchase->details()->insert($pDetails);
 
-                    // Increase product stock
-                    Product::where('id', $product['product_id'])
-                           ->update(['quantity' => DB::raw('quantity+'.$product['quantity'])]);
+                    // Increase product stock and update latest buying price
+                    $productModel = Product::find($product['product_id']);
+                    $productModel->quantity += $product['quantity'];
+                    $productModel->buying_price = $product['unitcost'];
+                    $productModel->save();
                 }
             }
         });

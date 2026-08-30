@@ -97,4 +97,26 @@ class PurchaseForm extends Component
 
         $this->invoiceProducts = array_values($this->invoiceProducts);
     }
+
+    public function updatedInvoiceProducts($value, $key)
+    {
+        $parts = explode('.', $key);
+        
+        // If the product_id field was changed, auto-populate the product_price
+        if (count($parts) == 2 && $parts[1] == 'product_id') {
+            $index = $parts[0];
+            if ($value) {
+                $product = current(array_filter((array)$this->allProducts, function($e) use($value) { return $e->id == $value; }));
+                if (!$product) {
+                    $product = $this->allProducts->find($value);
+                }
+                
+                if ($product) {
+                    $this->invoiceProducts[$index]['product_price'] = $product->buying_price;
+                }
+            } else {
+                $this->invoiceProducts[$index]['product_price'] = 0;
+            }
+        }
+    }
 }
